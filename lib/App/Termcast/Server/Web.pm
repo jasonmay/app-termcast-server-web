@@ -4,13 +4,14 @@ package App::Termcast::Server::Web;
 use Twiggy::Server;
 use Plack::Request;
 use Plack::Response;
+use Plack::Builder;
 
 use App::Termcast::Session;
 use App::Termcast::Handle;
 use AnyEvent::Socket;
 
-use Path::Dispatcher::Path;
 use App::Termcast::Server::Web::Dispatcher;
+use Path::Dispatcher::Path;
 
 use Moose;
 
@@ -139,6 +140,7 @@ sub handle_server_notice {
     elsif ($data->{notice} eq 'disconnect') {
         $self->delete_stream($data->{session_id});
         $self->delete_stream_handle($data->{session_id});
+
     }
 }
 
@@ -181,8 +183,13 @@ sub create_stream_handle {
             },
             on_error => sub {
                 my ($h, $fatal, $error) = @_;
-                $self->delete_stream_handle($h->session_id);
-                $h->destroy;
+                if ($fatal) {
+                    $self->delete_stream_handle($h->session_id);
+                    $h->destroy;
+                }
+                else {
+                    warn $error;
+                }
             },
             handle_id => $session_id,
         );
@@ -191,7 +198,9 @@ sub create_stream_handle {
             'App::Termcast::Server::Web::SessionData'
         )->new();
         $h->session($session);
+        $self->set_stream_handle($h->handle_id => $h);
     };
+
 }
 
 sub run {
@@ -213,18 +222,23 @@ sub run {
 sub app {
     my $self = shift;
 
-    sub {
-        my $env = shift;
-        my $req = Plack::Request->new($env);
-        my $path = Path::Dispatcher::Path->new(
-            path     => $req->path_info,
-            metadata => $req->env,
-        );
+    builder {
+        enable 'Plack::Middleware::Static',
+            path => sub { s!^/static/!! }, root => 'web/';
 
-        my $dispatch = App::Termcast::Server::Web::Dispatcher->dispatch($path);
-        return Plack::Response->new(404)->finalize if !$dispatch->has_matches;
+        sub {
+            my $env = shift;
+            my $req = Plack::Request->new($env);
+            my $path = Path::Dispatcher::Path->new(
+                path     => $req->path_info,
+                metadata => $req->env,
+            );
 
-        $dispatch->run($req, $self);
+            my $dispatch = App::Termcast::Server::Web::Dispatcher->dispatch($path);
+            return Plack::Response->new(404)->finalize if !$dispatch->has_matches;
+
+            $dispatch->run($req, $self);
+        };
     };
 }
 

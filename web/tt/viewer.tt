@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Foo</title>
+<link href="styles/main.css" media="screen" rel="stylesheet" type="text/css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script language="javascript">
+var INTERVAL_ID;
+
+// two different locks: client side and server side.
+//
+// First level lock: If we're downloading the ajax response,
+// prevent beginning a download from a succeeding timer process.
+//
+// Second level lock: When processing the terminal screen, don't
+// let any other webserver processes begin. Without this, the
+// terminal frames will not cache properly.
+
+var downloading;
+start();
+
+function termcast_cb(data) {
+    downloading = 1;
+    if (data.length > 0) {
+        $('#termcast').html(data);
+    }
+    else {
+        $('#termcast').html('<span style="color:white">could not find stream. stopping the viewer</span>');
+        clearInterval(INTERVAL_ID);
+    }
+    downloading = 0;
+}
+
+function update_termcast() {
+    if (downloading) return;
+    downloading = 1;
+    $.get('/socket/[% stream_id %]', termcast_cb);
+}
+
+function start() {
+    INTERVAL_ID = setInterval('update_termcast()', 300);
+}
+
+</script>
+</head>
+<body>
+<h1>Web Termcast Viewer</h1>
+<div id="container" style="font-family: monaco, consolas, lucida console, monospace;-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 10px; background-color: black; font-size: 80%; text-align: center; width: 50em;">
+<div id="termcast" style="border: solid 1px white; text-align: left;height: 50ex; overflow: auto">
+</div>
+</div>
+</body>
+</html>
+
