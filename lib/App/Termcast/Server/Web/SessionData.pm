@@ -22,7 +22,15 @@ has html_generator => (
 
 sub _build_html_generator {
     my $self = shift;
-    return HTML::FromANSI->new;
+    return HTML::FromANSI->new(
+        cols => 80,
+        rows => 24,
+        tt   => 0,
+        wrap => 1,
+        show_cursor => 1,
+        font_face => 'monaco, consolas, lucida console, monospace',
+        style => 'padding: 0; margin: 0;letter-spacing: 0; font-size: 80%; background-color: white',
+    );
 }
 
 no Moose::Role;
