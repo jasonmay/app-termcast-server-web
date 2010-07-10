@@ -17,7 +17,7 @@ Foo -
 has html_generator => (
     is        => 'ro',
     isa       => 'HTML::FromANSI',
-    lazy_buid => 1,
+    lazy_build => 1,
 );
 
 sub _build_html_generator {

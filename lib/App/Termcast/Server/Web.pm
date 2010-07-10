@@ -1,9 +1,19 @@
 #!::usr::bin::env perl
 package App::Termcast::Server::Web;
-use Moose;
-use AnyEvent::Socket;
+
 use Twiggy::Server;
+use Plack::Request;
+use Plack::Response;
+
 use App::Termcast::Session;
+use App::Termcast::Handle;
+use AnyEvent::Socket;
+
+use Path::Dispatcher::Path;
+use App::Termcast::Server::Web::Dispatcher;
+
+use Moose;
+
 use namespace::autoclean;
 
 =head1 NAME
@@ -71,42 +81,15 @@ has stream_handles => (
         get_stream_handle    => 'get',
         stream_handle_list   => 'get',
         delete_stream_handle => 'delete',
+        clear_stream_handles => 'clear',
     },
 );
-
-sub BUILD {
-    my $self = shift;
-
-    my $server = Twiggy::Server->new(
-#        host => $self->host,
-        port => $self->port,
-    );
-
-    $server->register_service(sub { $self->handle_http(@_) });
-    $self->server($server);
-
-    tcp_connect $self->host, $self->client_port, sub {
-        $self->client_connect(@_);
-    };
-
-}
-
-sub handle_http {
-    my $self = shift;
-    my $env  = shift;
-
-    require YAML;
-    my $dump = YAML::Dump($self->stream_data);
-
-    return[200, ["Content-Type" => 'text/plain'], [$dump] ];
-}
 
 sub client_connect {
     my $self = shift;
     my ($fh) = @_
         or die "localhost connect failed: $!";
 
-    warn "client connect";
     my $h = AnyEvent::Handle->new(
         fh => $fh,
         on_read => sub {
@@ -147,11 +130,16 @@ sub handle_server_notice {
         $self->set_stream(
             $data->{connection}{session_id} => $data->{connection},
         );
+
+        $self->create_stream_handle(
+            $data->{connection}{session_id},
+            $data->{connection}{socket},
+        );
     }
     elsif ($data->{notice} eq 'disconnect') {
         $self->delete_stream($data->{session_id});
+        $self->delete_stream_handle($data->{session_id});
     }
-    $self->send_connection_list($_) for $self->handle_list;
 }
 
 sub handle_server_response {
@@ -165,32 +153,79 @@ sub handle_server_response {
             $self->clear_stream_data;
             for (@sessions) {
                 $self->set_stream($_->{session_id} => $_);
-                tcp_connect 'unix/', $_->{socket}, sub {
-                    my $fh = shift;
-                    my $u_h = App::Termcast::Handle->new(
-                        fh => $fh,
-                        on_read => sub {
-
-                        },
-                        on_error => sub {
-                            my ($u_h, $fatal, $error) = @_;
-                            $self->delete_stream_handle($u_h->session_id);
-                            $u_h->destroy;
-                        },
-                        session_id => $_->{session_id},
-                    );
-
-                    my $session = App::Termcast::Session->with_traits(
-                        'App::Termcast::Server::Web::SessionData'
-                    )->new();
-                    $u_h->session($session);
-                };
+                $self->create_stream_handle($_->{session_id}, $_->{socket});
             }
         }
     }
 }
+
+sub create_stream_handle {
+    my $self       = shift;
+    my $session_id = shift;
+    my $socket     = shift;
+
+    tcp_connect 'unix/', $socket, sub {
+        my $fh = shift;
+        my $h = App::Termcast::Handle->new(
+            fh => $fh,
+            on_read => sub {
+                my $h = shift;
+                $h->push_read(
+                    chunk => 1, sub {
+                        my ($h, $char) = @_;
+                        $h->session->html_generator->add_text(
+                            $char
+                        );
+                    },
+                );
+            },
+            on_error => sub {
+                my ($h, $fatal, $error) = @_;
+                $self->delete_stream_handle($h->session_id);
+                $h->destroy;
+            },
+            handle_id => $session_id,
+        );
+
+        my $session = App::Termcast::Session->with_traits(
+            'App::Termcast::Server::Web::SessionData'
+        )->new();
+        $h->session($session);
+    };
+}
+
 sub run {
+    my $self = shift;
+
+    my $server = Twiggy::Server->new(
+        port => $self->port,
+    );
+
+    $server->register_service($self->app);
+    $self->server($server);
+
+    tcp_connect $self->host, $self->client_port, sub {
+        $self->client_connect(@_);
+    };
     AE::cv->recv;
+}
+
+sub app {
+    my $self = shift;
+
+    sub {
+        my $env = shift;
+        my $req = Plack::Request->new($env);
+        my $path = Path::Dispatcher::Path->new(
+            path     => $req->path_info,
+            metadata => $req->env,
+        );
+
+        my $dispatch = App::Termcast::Server::Web::Dispatcher->dispatch($path);
+        return Plack::Response->new(404)->finalize if !$dispatch->has_matches;
+
+        $dispatch->run($req, $self);
+    };
 }
 
 __PACKAGE__->meta->make_immutable;
