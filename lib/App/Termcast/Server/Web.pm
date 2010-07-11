@@ -153,6 +153,7 @@ sub handle_server_response {
         if (@sessions) {
             $self->clear_stream_handles;
             $self->clear_stream_data;
+
             for (@sessions) {
                 $self->set_stream($_->{session_id} => $_);
                 $self->create_stream_handle($_->{session_id}, $_->{socket});

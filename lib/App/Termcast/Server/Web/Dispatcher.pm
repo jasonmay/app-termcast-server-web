@@ -41,12 +41,13 @@ under { REQUEST_METHOD => 'GET' } => sub {
         my $web = shift;
 
         my $output;
-
         my $stream = $2;
         my $handle = $web->get_stream_handle($stream)
             or return response('Stream not found');
 
-        return response($handle->session->html_generator->html);
+        my $screen = $handle->session->html_generator->html;
+
+        return response($screen);
     };
 };
 
