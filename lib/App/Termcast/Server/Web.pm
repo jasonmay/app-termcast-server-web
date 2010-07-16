@@ -13,6 +13,8 @@ use AnyEvent::Socket;
 use App::Termcast::Server::Web::Dispatcher;
 use Path::Dispatcher::Path;
 
+#use File::Temp qw(tempfile);
+
 use Moose;
 
 use namespace::autoclean;
@@ -208,7 +210,9 @@ sub run {
     my $self = shift;
 
     my $server = Twiggy::Server->new(
-        port => $self->port,
+        #    listen => ['/tmp/termcast_server_web.sock'],
+        host => '127.0.0.1',
+        port => 7071,
     );
 
     $server->register_service($self->app);

@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>Foo</title>
+<link href="styles/main.css" media="screen" rel="stylesheet" type="text/css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+</head>
+<body>
+<h1>Web Termcast Viewer</h1>
+[% IF stream_data.keys.size > 0 %]
+<ul>
+[% FOREACH stream_id = stream_data.keys %]
+<li><a href="view/[% stream_id %]">[% stream_data.$stream_id.user %]</a></li>
+[% END %]
+</ul>
+[% ELSE %]
+There is nobody streaming at this time.
+[% END %]
+</body>
+</html>

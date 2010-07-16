@@ -18,19 +18,25 @@ use Path::Dispatcher::Declarative -base, -default => {
     token_delimiter => '/',
 };
 
+my $t = Template->new(
+    {
+        INCLUDE_PATH => 'web/tt',
+    }
+);
+
 on qr{^/$} => sub {
     my $req = shift;
     my $web = shift;
 
     my $output;
 
-    $output = join(
-        qq|<br />|,
-        map {
-            sprintf q|<a href="/view/%s">%s</a>|,
-                ($_), $web->get_stream($_)->{user};
-        } $web->stream_ids
-    );
+    $t->process(
+        'users.tt',
+        {
+            stream_data => $web->stream_data
+        },
+        \$output,
+    ) or die $t->error();
 
     response($output);
 };
@@ -59,14 +65,24 @@ under { REQUEST_METHOD => 'GET' } => sub {
         my $output;
         my $stream = $2;
 
-        my $config = {
-            INCLUDE_PATH => 'web/tt',
-        };
-
-        my $t = Template->new($config);
         my $vars = {
             stream_id => $stream,
         };
+
+#        {
+#            my $handle = $web->get_stream_handle($stream)
+#                or return response('Stream not found');
+#
+#            my $screen = $handle->session->html_generator->html;
+#            warn sprintf q|%s is viewing %s|,
+#                $req->address,
+#                $web->get_stream($stream)->{user};
+#
+#            open my $fh, $handle->handle_id;
+#            print $fh $screen;
+#            close $fh;
+#
+#        }
 
         $t->process('viewer.tt', $vars, \$output) or die $t->error();
 
