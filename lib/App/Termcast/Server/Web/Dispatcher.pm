@@ -49,7 +49,9 @@ under { REQUEST_METHOD => 'GET' } => sub {
         my $output;
         my $stream = $2;
         my $handle = $web->get_stream_handle($stream)
-            or return response('Stream not found');
+            or return response(
+                q|<script language="javascript">window.location = '/';</script>|
+            );
 
         my $screen = $handle->session->html_generator->html;
 

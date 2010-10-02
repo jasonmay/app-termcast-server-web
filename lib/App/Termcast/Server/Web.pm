@@ -142,7 +142,6 @@ sub handle_server_notice {
     elsif ($data->{notice} eq 'disconnect') {
         $self->delete_stream($data->{session_id});
         $self->delete_stream_handle($data->{session_id});
-
     }
 }
 

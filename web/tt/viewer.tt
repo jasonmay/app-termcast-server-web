@@ -24,7 +24,7 @@ function termcast_cb(data) {
         $('#termcast').html(data);
     }
     else {
-        $('#termcast').html('<span style="color:white">could not find stream. stopping the viewer</span>');
+        window.location = '/';
         clearInterval(INTERVAL_ID);
     }
     downloading = 0;
