@@ -187,7 +187,7 @@ sub create_stream_handle {
             on_error => sub {
                 my ($h, $fatal, $error) = @_;
                 if ($fatal) {
-                    $self->delete_stream_handle($h->session_id);
+                    $self->delete_stream_handle($h->handle_id);
                     $h->destroy;
                 }
                 else {
