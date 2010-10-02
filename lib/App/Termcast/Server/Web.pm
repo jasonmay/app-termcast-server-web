@@ -229,7 +229,7 @@ sub app {
 
     builder {
         enable 'Plack::Middleware::Static',
-            path => sub { s!^/static/!! }, root => 'web/';
+            path => qr!^/?static/!, root => 'web/';
 
         sub {
             my $env = shift;
