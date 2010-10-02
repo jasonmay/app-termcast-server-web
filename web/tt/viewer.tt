@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>Termcast</title>
-<link href="styles/main.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../static/styles/main.css" media="screen" rel="stylesheet" type="text/css" />
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script language="javascript">
 var INTERVAL_ID;
@@ -45,7 +45,7 @@ function start() {
 <body>
 <h1>Web Termcast Viewer</h1>
 <div id="container" style="font-family: monaco, consolas, lucida console, monospace;-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 10px; background-color: black; font-size: 80%; text-align: center; width: 50em;">
-<div id="termcast" style="border: solid 1px white; text-align: left;height: 50ex; overflow: auto">
+<div id="termcast" style="border: solid 1px white; text-align: left;height: 50ex; white-space: nowrap">
 </div>
 </div>
 </body>

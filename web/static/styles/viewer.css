@@ -1,0 +1,44 @@
+body {
+    font-family: helvetica,sans-serif;
+    font-size: 80%;
+}
+
+a:link {
+    color: #006;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #00b;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #00b;
+    text-decoration: underline;
+}
+
+.container h1 {
+    background-color: #eef;
+    border: solid 4px #55b;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+    padding: 4px 12px;
+    color: black;
+    width: 60%;
+}
+
+.container {
+    margin-left: 12em;
+    width: 600px;
+}
+
+ul.nav {
+    margin: 0;
+    padding: 0;
+}
+
+hr {
+    border: solid 2px #55b;
+}
