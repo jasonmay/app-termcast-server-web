@@ -175,14 +175,14 @@ sub create_stream_handle {
             fh => $fh,
             on_read => sub {
                 my $h = shift;
-                $h->push_read(
-                    chunk => 1, sub {
-                        my ($h, $char) = @_;
-                        $h->session->html_generator->add_text(
-                            $char
-                        );
-                    },
-                );
+
+                if ($h->{rbuf} =~ s/.+\e\[2[HJ]//sm) {
+                    $h->session->clear_html_generator;
+                    $h->session->html_generator;
+                }
+                $h->session->html_generator->add_text($h->rbuf);
+                $h->{rbuf} = '';
+
             },
             on_error => sub {
                 my ($h, $fatal, $error) = @_;
