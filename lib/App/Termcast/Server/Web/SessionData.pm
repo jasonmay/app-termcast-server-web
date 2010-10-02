@@ -1,6 +1,26 @@
 #!/usr/bin/env perl
 package App::Termcast::Server::Web::SessionData;
 use Moose::Role;
+use HTML::FromANSI;
+
+@HTML::FromANSI::Color = map { "#$_" } qw(
+    000000
+    ca311c
+    60bc33
+    bebc3a
+    1432c8
+    c150be
+    61bdbe
+    c7c7c7
+    686868
+    df6f6b
+    70f467
+    fef966
+    6d75ea
+    ed73fc
+    73fafd
+    ffffff
+);
 
 =head1 NAME
 
