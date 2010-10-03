@@ -21,7 +21,11 @@ start();
 function termcast_cb(data) {
     downloading = 1;
     if (data.length > 0) {
-        $('#termcast').html(data);
+        var tc = $('#termcast');
+
+        alert(data);
+
+        tc.html(data);
     }
     else {
         window.location = '/';

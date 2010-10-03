@@ -1,26 +1,7 @@
 #!/usr/bin/env perl
 package App::Termcast::Server::Web::SessionData;
 use Moose::Role;
-use HTML::FromANSI;
-
-@HTML::FromANSI::Color = map { "#$_" } qw(
-    000000
-    ca311c
-    60bc33
-    bebc3a
-    1432c8
-    c150be
-    61bdbe
-    c7c7c7
-    686868
-    df6f6b
-    70f467
-    fef966
-    6d75ea
-    ed73fc
-    73fafd
-    ffffff
-);
+use Term::VT102;
 
 =head1 NAME
 
@@ -34,24 +15,67 @@ Foo -
 
 =cut
 
-has html_generator => (
-    is        => 'ro',
-    isa       => 'HTML::FromANSI',
+has cols => (
+    is      => 'ro',
+    isa     => 'Int',
+    default => 80,
+);
+
+has rows => (
+    is      => 'ro',
+    isa     => 'Int',
+    default => 24,
+);
+
+has vt => (
+    is         => 'ro',
+    isa        => 'Term::VT102',
     lazy_build => 1,
 );
 
-sub _build_html_generator {
+has screen => (
+    is        => 'ro',
+    isa       => 'ArrayRef[ArrayRef[HashRef]]',
+    default   => sub {
+        my $self = shift;
+        my ($rows, $cols) = ($self->rows, $self->cols);
+
+        return [
+            map {
+            [ map { +{} } (1 .. $cols) ]
+            } (1 .. $rows)
+        ];
+    },
+);
+
+sub _build_vt {
     my $self = shift;
-    return HTML::FromANSI->new(
-        cols => 80,
-        rows => 24,
-        tt   => 0,
-        wrap => 1,
-        show_cursor => 1,
-        formatted => 1,
-        font_face => 'monaco, consolas, lucida console, monospace',
-        style => 'padding: 0; margin: 0;letter-spacing: 0; font-size: 80%; background-color: white',
+    return Term::VT102->new(
+        cols => $self->cols,
+        rows => $self->rows,
     );
+}
+
+sub update_screen {
+    my $self = shift;
+    my ($vt, $screen) = ($self->vt, $self->screen);
+
+    foreach my $row (0 .. $self->rows-1) {
+        my $line = $vt->row_plaintext($row + 1);
+        my $att = $vt->row_attr($row + 1);
+
+        #warn map { ' ' . ord } $att;
+        foreach my $col (0 .. $self->cols-1) {
+            my $text = substr($line, $col, 1);
+
+            my %data;
+
+            @data{qw|fg bg bo fo st ul bl rv v|}
+                = ($vt->attr_unpack(substr($att, $col * 2, 2)), $text);
+
+            $screen->[$row]->[$col] = \%data;
+        }
+    }
 }
 
 no Moose::Role;

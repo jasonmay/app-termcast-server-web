@@ -176,12 +176,12 @@ sub create_stream_handle {
                 my $h = shift;
 
                 if ($h->{rbuf} =~ s/.+\e\[2[HJ]//sm) {
-                    $h->session->clear_html_generator;
-                    $h->session->html_generator;
+                    # reset so its buffer is 100% empty
+                    $h->session->clear_vt;
+                    $h->session->vt;
                 }
-                $h->session->html_generator->add_text($h->rbuf);
+                $h->session->vt->process($h->rbuf);
                 $h->{rbuf} = '';
-
             },
             on_error => sub {
                 my ($h, $fatal, $error) = @_;

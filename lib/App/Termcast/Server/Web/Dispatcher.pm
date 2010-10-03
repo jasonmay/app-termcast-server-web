@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 package App::Termcast::Server::Web::Dispatcher;
 use Template;
+use JSON;
 
 =head1 NAME
 
@@ -23,6 +24,8 @@ my $t = Template->new(
         INCLUDE_PATH => 'web/tt',
     }
 );
+
+my $json = JSON->new;
 
 on qr{^/$} => sub {
     my $req = shift;
@@ -53,9 +56,10 @@ under { REQUEST_METHOD => 'GET' } => sub {
                 q|<script language="javascript">window.location = '/';</script>|
             );
 
-        my $screen = $handle->session->html_generator->html;
+        $handle->session->update_screen;
+        my $screen = $handle->session->screen;
 
-        return response($screen);
+        return response($json->encode($screen));
     };
 };
 
