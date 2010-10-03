@@ -5,6 +5,8 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script language="javascript">
 var INTERVAL_ID;
+var COLS = 80;
+var ROWS = 24;
 
 // two different locks: client side and server side.
 //
@@ -16,16 +18,51 @@ var INTERVAL_ID;
 // terminal frames will not cache properly.
 
 var downloading;
+var pos_elems = [];
+
 start();
+
+$(function() {
+    tc = $('#container');
+
+    for (var row = 0; row < ROWS; ++row) {
+        for (var col = 0; col < COLS; ++col) {
+            var span = '<span id="pos-' + row + '-' + col + '">&nbsp;</span>';
+            $('#container').append(span);
+        }
+        tc.append('<span></span><br />');
+    }
+
+});
 
 function termcast_cb(data) {
     downloading = 1;
     if (data.length > 0) {
-        var tc = $('#termcast');
+        var tc = $('#container');
 
-        alert(data);
+        var obj = JSON.parse(data);
+        if (obj.fresh) {
+            for (var row = 0; row < ROWS; ++row) {
+                for (var col = 0; col < COLS; ++col) {
+                    var selector = '#pos-' + row + '-' + col;
+                    var content = obj.fresh[row][col].v;
+                    if (content == ' ') {
+                        $(selector)
+                            .text('.')
+                            .css({color: 'black'});
+                    }
+                    else {
+                        $(selector)
+                            .text(content)
+                            .css({color: 'white'});
+                    }
+                }
+            }
+        }
+        else if (obj.update) {
 
-        tc.html(data);
+        }
+
     }
     else {
         window.location = '/';
@@ -48,9 +85,7 @@ function start() {
 </head>
 <body>
 <h1>Web Termcast Viewer</h1>
-<div id="container" style="font-family: monaco, consolas, lucida console, monospace;-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 10px; background-color: black; font-size: 80%; text-align: center; width: 50em;">
-<div id="termcast" style="border: solid 1px white; text-align: left;height: 50ex; white-space: nowrap">
-</div>
+<div id="container" style="font-family: monaco, consolas, lucida console, monospace;-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 10px; background-color: black; font-size: 80%; width: 50em;">
 </div>
 </body>
 </html>

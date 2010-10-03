@@ -59,7 +59,7 @@ under { REQUEST_METHOD => 'GET' } => sub {
         $handle->session->update_screen;
         my $screen = $handle->session->screen;
 
-        return response($json->encode($screen));
+        return response($json->encode({fresh => $screen}));
     };
 };
 
@@ -74,21 +74,6 @@ under { REQUEST_METHOD => 'GET' } => sub {
         my $vars = {
             stream_id => $stream,
         };
-
-#        {
-#            my $handle = $web->get_stream_handle($stream)
-#                or return response('Stream not found');
-#
-#            my $screen = $handle->session->html_generator->html;
-#            warn sprintf q|%s is viewing %s|,
-#                $req->address,
-#                $web->get_stream($stream)->{user};
-#
-#            open my $fh, $handle->handle_id;
-#            print $fh $screen;
-#            close $fh;
-#
-#        }
 
         $t->process('viewer.tt', $vars, \$output) or die $t->error();
 
