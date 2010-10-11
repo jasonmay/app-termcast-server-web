@@ -2,7 +2,7 @@
 <head>
 <title>Termcast</title>
 <link href="static/styles/viewer.css" media="screen" rel="stylesheet" type="text/css" />
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="static/js/jquery-1.4.1.js"></script>
 </head>
 <body>
 <h1>Web Termcast Viewer</h1>

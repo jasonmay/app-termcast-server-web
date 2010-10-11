@@ -35,7 +35,7 @@ has vt => (
 
 has screen => (
     is        => 'ro',
-    isa       => 'ArrayRef[ArrayRef[HashRef]]',
+    isa       => 'ArrayRef[ArrayRef[HashRef]]', # lol
     default   => sub {
         my $self = shift;
         my ($rows, $cols) = ($self->rows, $self->cols);
@@ -60,11 +60,12 @@ sub update_screen {
     my $self = shift;
     my ($vt, $screen) = ($self->vt, $self->screen);
 
+    my %updates;
+    my @data;
     foreach my $row (0 .. $self->rows-1) {
         my $line = $vt->row_plaintext($row + 1);
         my $att = $vt->row_attr($row + 1);
 
-        #warn map { ' ' . ord } $att;
         foreach my $col (0 .. $self->cols-1) {
             my $text = substr($line, $col, 1);
 
@@ -73,9 +74,22 @@ sub update_screen {
             @data{qw|fg bg bo fo st ul bl rv v|}
                 = ($vt->attr_unpack(substr($att, $col * 2, 2)), $text);
 
-            $screen->[$row]->[$col] = \%data;
+            my $prev = $screen->[$row]->[$col];
+            $screen->[$row]->[$col] = {%data}; # clone
+
+            if ($prev) {
+                foreach my $attr (keys %data) {
+                    delete $data{$attr}
+                        if $prev->{$attr}
+                            and $data{$attr} eq $prev->{$attr};
+                }
+            }
+
+            push @data, [$row, $col, \%data] if scalar(keys %data) > 0;
         }
     }
+
+    return \@data;
 }
 
 no Moose::Role;

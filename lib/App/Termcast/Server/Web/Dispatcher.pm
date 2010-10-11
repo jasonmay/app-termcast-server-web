@@ -33,33 +33,40 @@ on qr{^/$} => sub {
 
     my $output;
 
-    $t->process(
-        'users.tt',
-        {
-            stream_data => $web->stream_data
-        },
-        \$output,
-    ) or die $t->error();
+    my %config = (
+        stream_data => $web->stream_data,
+    );
 
-    response($output);
+    $t->process('users.tt', \%config, \$output)
+        or die $t->error();
+
+    my $res = response($output);
+    return $res;
 };
 
 under { REQUEST_METHOD => 'GET' } => sub {
-    on ['socket', qr|^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$|] => sub {
+    on ['socket', qr|^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$|, qr/^\w+$/] => sub {
         my $req = shift;
         my $web = shift;
 
         my $output;
-        my $stream = $2;
+        my ($stream, $type) = ($2, $3);
+
         my $handle = $web->get_stream_handle($stream)
             or return response(
                 q|<script language="javascript">window.location = '/';</script>|
             );
 
-        $handle->session->update_screen;
+        my $updates = $handle->session->update_screen;
         my $screen = $handle->session->screen;
 
-        return response($json->encode({fresh => $screen}));
+        if ($type eq 'fresh') {
+            return response($json->encode({fresh => $screen}));
+        }
+        elsif ($type eq 'diff') {
+            return response($json->encode({diff => $updates}));
+        }
+
     };
 };
 

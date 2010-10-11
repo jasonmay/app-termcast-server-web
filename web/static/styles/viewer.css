@@ -29,9 +29,20 @@ a:hover {
     width: 60%;
 }
 
-.container {
+#container {
     margin-left: 12em;
-    width: 600px;
+    padding: 10px;
+    width: 50em;
+
+    background-color: black;
+    font-family: monaco, consolas, lucida console, monospace;
+    font-size: 80%;
+
+    /*
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    */
 }
 
 ul.nav {
@@ -42,3 +53,4 @@ ul.nav {
 hr {
     border: solid 2px #55b;
 }
+
