@@ -19,12 +19,6 @@ use Path::Dispatcher::Declarative -base, -default => {
     token_delimiter => '/',
 };
 
-my $t = Template->new(
-    {
-        INCLUDE_PATH => 'web/tt',
-    }
-);
-
 my $json = JSON->new;
 
 on qr{^/$} => sub {
@@ -33,15 +27,6 @@ on qr{^/$} => sub {
 
     my $output;
 
-    my %config = (
-        stream_data => $web->stream_data,
-    );
-
-    $t->process('users.tt', \%config, \$output)
-        or die $t->error();
-
-    my $res = response($output);
-    return $res;
 };
 
 under { REQUEST_METHOD => 'GET' } => sub {
@@ -52,20 +37,6 @@ under { REQUEST_METHOD => 'GET' } => sub {
         my $output;
         my ($stream, $type) = ($2, $3);
 
-        my $handle = $web->get_stream_handle($stream)
-            or return response(
-                q|<script language="javascript">window.location = '/';</script>|
-            );
-
-        my $updates = $handle->session->update_screen;
-        my $screen = $handle->session->screen;
-
-        if ($type eq 'fresh') {
-            return response($json->encode({fresh => $screen}));
-        }
-        elsif ($type eq 'diff') {
-            return response($json->encode({diff => $updates}));
-        }
 
     };
 };
@@ -75,16 +46,8 @@ under { REQUEST_METHOD => 'GET' } => sub {
         my $req = shift;
         my $web = shift;
 
-        my $output;
         my $stream = $2;
 
-        my $vars = {
-            stream_id => $stream,
-        };
-
-        $t->process('viewer.tt', $vars, \$output) or die $t->error();
-
-        return response($output);
     };
 };
 

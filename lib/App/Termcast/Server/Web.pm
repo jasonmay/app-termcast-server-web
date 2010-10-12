@@ -1,7 +1,8 @@
 #!::usr::bin::env perl
 package App::Termcast::Server::Web;
 
-use Twiggy::Server;
+use Tatsumaki::MessageQueue;
+
 use Plack::Request;
 use Plack::Response;
 use Plack::Builder;
@@ -91,7 +92,7 @@ has stream_handles => (
 sub client_connect {
     my $self = shift;
     my ($fh) = @_
-        or die "localhost connect failed: $!";
+        or die $self->host . " connect failed: $!";
 
     my $h = AnyEvent::Handle->new(
         fh => $fh,
@@ -207,42 +208,9 @@ sub create_stream_handle {
 
 sub run {
     my $self = shift;
-
-    my $server = Twiggy::Server->new(
-        #    listen => ['/tmp/termcast_server_web.sock'],
-        host => '127.0.0.1',
-        port => 7071,
-    );
-
-    $server->register_service($self->app);
-    $self->server($server);
-
     tcp_connect $self->host, $self->client_port, sub {
+        warn "connected...";
         $self->client_connect(@_);
-    };
-    AE::cv->recv;
-}
-
-sub app {
-    my $self = shift;
-
-    builder {
-        enable 'Plack::Middleware::Static',
-            path => qr!^/?static/!, root => 'web/';
-
-        sub {
-            my $env = shift;
-            my $req = Plack::Request->new($env);
-            my $path = Path::Dispatcher::Path->new(
-                path     => $req->path_info,
-                metadata => $req->env,
-            );
-
-            my $dispatch = App::Termcast::Server::Web::Dispatcher->dispatch($path);
-            return Plack::Response->new(404)->finalize if !$dispatch->has_matches;
-
-            $dispatch->run($req, $self);
-        };
     };
 }
 
