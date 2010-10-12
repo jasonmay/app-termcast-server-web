@@ -7,7 +7,9 @@
 <script type="text/javascript" src="../static/js/stream.js"> </script>
 <script type="text/javascript">
 // <!--
-start_stream('[% stream_id %]');
+$.get('/id', function(data) {
+    start_stream('[% stream_id %]', data);
+});
 // -->
 </script>
 </head>

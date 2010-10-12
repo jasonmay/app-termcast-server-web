@@ -11,8 +11,7 @@ use App::Termcast::Session;
 use App::Termcast::Handle;
 use AnyEvent::Socket;
 
-use App::Termcast::Server::Web::Dispatcher;
-use Path::Dispatcher::Path;
+use Time::HiRes;
 
 #use File::Temp qw(tempfile);
 
@@ -182,6 +181,19 @@ sub create_stream_handle {
                     $h->session->vt;
                 }
                 $h->session->vt->process($h->rbuf);
+
+                my $updates = $h->session->update_screen;
+
+                my $mq = Tatsumaki::MessageQueue->instance($session_id);
+                $mq->publish(
+                    {
+                        type    => 'message',
+                        data    => {diff => $updates},
+                        #address => $self->request->address,
+                        time => scalar Time::HiRes::gettimeofday,
+                    }
+                );
+
                 $h->{rbuf} = '';
             },
             on_error => sub {

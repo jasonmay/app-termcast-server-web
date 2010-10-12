@@ -6,6 +6,7 @@ use warnings;
 
 use AnyEvent::Socket;
 use App::Termcast::Server::Web;
+use Template;
 use JSON ();
 
 __PACKAGE__->asynchronous(1);
@@ -24,24 +25,32 @@ my $t = Template->new(
 sub get {
     my ($self, $stream_id, $type) = @_;
 
+    my $client_id = $self->request->param('client_id')
+            or Tatsumaki::Error::HTTP->throw(500, "'client_id' needed");
+
     my $web = $self->server;
 
+    #require JSON; warn JSON::encode_json($web->stream_data);
     my $handle = $web->get_stream_handle($stream_id)
-        or return response(
-            q|<script language="javascript">window.location = '/';</script>|
-        );
+    or do {
+        $self->write([]);
+        $self->finish;
+        return;
+    };
 
-    my $updates = $handle->session->update_screen;
-    my $screen  = $handle->session->screen;
+    my $mq = Tatsumaki::MessageQueue->instance($stream_id);
 
-    if ($type eq 'fresh') {
-        $self->write(JSON::encode_json({fresh => $screen}));
+    my $queue_is_empty = !$mq->poll_once(
+        $client_id, sub {
+            $self->write(\@_);
+            $self->finish();
+        }
+    );
+
+    if ($queue_is_empty) {
+        $self->write([]);
+        $self->finish();
     }
-    elsif ($type eq 'diff') {
-        $self->write(JSON::encode_json({diff => $updates}));
-    }
-
-    $self->finish;
 }
 
 1;
