@@ -30,8 +30,6 @@ $(function() {
 function termcast_cb(incoming) {
     downloading = 1;
     if (typeof(incoming) === 'object') {
-        //alert('working?');
-
         var tc = $('#container');
 
         for (var i = 0; i < incoming.length; i++) {

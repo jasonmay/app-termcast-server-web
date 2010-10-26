@@ -40,17 +40,20 @@ sub get {
 
     my $mq = Tatsumaki::MessageQueue->instance($stream_id);
 
-    my $queue_is_empty = !$mq->poll_once(
+    my $sent;
+    $mq->poll(
         $client_id, sub {
             $self->write(\@_);
-            $self->finish();
+            $sent = 1;
         }
     );
 
-    if ($queue_is_empty) {
+
+    if (!$sent) {
         $self->write([]);
-        $self->finish();
     }
+
+    $self->finish();
 }
 
 1;
