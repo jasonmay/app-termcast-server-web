@@ -175,10 +175,10 @@ sub create_stream_handle {
             on_read => sub {
                 my $h = shift;
 
-                if ($h->{rbuf} =~ s/.+\e\[2[HJ]//sm) {
+                if ($h->{rbuf} =~ s/.*\e\[2J//sm) {
+
                     # reset so its buffer is 100% empty
                     $h->session->clear_vt;
-                    $h->session->vt;
                 }
                 $h->session->vt->process($h->rbuf);
 
