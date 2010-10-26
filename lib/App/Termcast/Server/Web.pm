@@ -49,11 +49,6 @@ has client_port => (
     default => 9092,
 );
 
-has server => (
-    is      => 'rw',
-    isa     => 'Twiggy::Server',
-);
-
 has client_handle => (
     is  => 'rw',
     isa => 'AnyEvent::Handle',
