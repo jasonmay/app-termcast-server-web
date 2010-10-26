@@ -8,7 +8,6 @@ use Data::UUID::LibUUID;
 sub get {
     my $self = shift;
 
-    warn "dlskfjdlfkj";
     $self->write(new_uuid_string());
 }
 

@@ -69,6 +69,8 @@ sub update_screen {
         foreach my $col (0 .. $self->cols-1) {
             my $text = substr($line, $col, 1);
 
+            $text = ' ' if ord($text) == 0;
+
             my %data;
 
             @data{qw|fg bg bo fo st ul bl rv v|}
@@ -80,8 +82,8 @@ sub update_screen {
             if ($prev) {
                 foreach my $attr (keys %data) {
                     delete $data{$attr}
-                        if $prev->{$attr}
-                            and $data{$attr} eq $prev->{$attr};
+                        if #$prev->{$attr} and
+                        ($data{$attr} || '') eq ($prev->{$attr} || '');
                 }
             }
 

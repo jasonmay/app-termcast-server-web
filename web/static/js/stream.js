@@ -27,43 +27,66 @@ $(function() {
 
 });
 
-function termcast_cb(data) {
+function termcast_cb(incoming) {
     downloading = 1;
-    if (typeof(data) === 'object') {
+    if (typeof(incoming) === 'object') {
+        //alert('working?');
+
         var tc = $('#container');
 
-        for (var obj in data) {
-            if (obj.fresh) {
-                for (var row = 0; row < ROWS; ++row) {
-                    for (var col = 0; col < COLS; ++col) {
-                        var selector = '#pos-' + row + '-' + col;
-                        var content = obj.fresh[row][col].v;
-                        if (content == ' ') {
-                            $(selector)
-                                .text('.')
-                                .css({color: 'black'});
-                        }
-                        else {
-                            $(selector)
-                                .text(content)
-                                .css({color: 'white'});
-                        }
-                    }
-                }
-            }
-            else if (obj.diff) {
-                for (var change in obj.diff) {
+        for (var i = 0; i < incoming.length; i++) {
+            obj = incoming[i];
+            data = obj.data;
+
+            if (data.diff) {
+                for (var j = 0; j < data.diff.length; j++) {
+                    var change = data.diff[j];
                     var row  = change[0],
                         col  = change[1],
                         diff = change[2];
 
+                    var color_map = [
+                        '#000000',
+                        '#ca311c',
+                        '#60bc33',
+                        '#bebc3a',
+                        '#1432c8',
+                        '#c150be',
+                        '#61bdbe',
+                        '#c7c7c7',
+                    ];
+
+                    var bold_color_map = [
+                        '#686868',
+                        '#df6f6b',
+                        '#70f467',
+                        '#fef966',
+                        '#6d75ea',
+                        '#ed73fc',
+                        '#73fafd',
+                        '#ffffff'
+                    ];
+
                     if (diff) {
                         var selector = '#pos-' + row + '-' + col;
 
+                        //alert(JSON.stringify(diff));
                         if (diff['v']) {
+                            var content = diff['v'];
+                            if (content == ' ') { content = '&nbsp;'; }
+
+                            var color;
+
+                            if (diff['bo']) {
+                                color = bold_color_map[diff['fg']];
+                            }
+                            else {
+                                color = color_map[diff['fg']];
+                            }
+
                             $(selector)
-                                .text(content)
-                                .css({color: 'white'});
+                                .html(content)
+                                .css({color: color});
                         }
                     }
                 }
@@ -79,10 +102,12 @@ function termcast_cb(data) {
 }
 
 function update_termcast(res_type, stream_id, client_id) {
-    if (downloading) { console.log('still downloading'); return; }
+    if (downloading) {
+        //console.log('still downloading');
+        return;
+    }
     downloading = 1;
     var url = '/socket/' + stream_id + '/' + res_type + '?client_id=' + client_id;
-    console.log('send');
     $.get(url, termcast_cb);
 }
 
