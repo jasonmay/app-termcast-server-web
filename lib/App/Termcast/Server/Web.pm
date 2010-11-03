@@ -183,7 +183,7 @@ sub create_stream_handle {
                 $mq->publish(
                     {
                         type    => 'message',
-                        data    => {diff => $updates},
+                        data    => $updates,
                         #address => $self->request->address,
                         time => scalar Time::HiRes::gettimeofday,
                     }

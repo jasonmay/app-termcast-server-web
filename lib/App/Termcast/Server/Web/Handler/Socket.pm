@@ -46,17 +46,9 @@ sub get {
     $mq->poll(
         $client_id, sub {
             shift(@_) until !@_ or $_[0]->{time} >= $latest{$client_id};
-            $self->stream_write(
-                [
-                    {
-                        data => {
-                            diff => $self->_squash_events(
-                                map { $_->{data}->{diff} } @_
-                            )
-                        }
-                    }
-                ]
-            );
+
+            my $data = $self->_squash_events( map { $_->{data} } @_ );
+            $self->stream_write( [{data => $data}] );
             $sent = 1;
         }
     );

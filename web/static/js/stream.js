@@ -36,56 +36,59 @@ function termcast_cb(incoming) {
             obj = incoming[i];
             data = obj.data;
 
-            if (data.diff) {
-                for (var j = 0; j < data.diff.length; j++) {
-                    var change = data.diff[j];
-                    var row  = change[0],
-                        col  = change[1],
-                        diff = change[2];
+            for (var j = 0; j < data.length; j++) {
+                var change = data[j];
+                var row  = change[0],
+                    col  = change[1],
+                    diff = change[2];
 
-                    var color_map = [
-                        '#000000',
-                        '#ca311c',
-                        '#60bc33',
-                        '#bebc3a',
-                        '#1432c8',
-                        '#c150be',
-                        '#61bdbe',
-                        '#c7c7c7',
-                    ];
+                var color_map = [
+                    '#000000',
+                    '#ca311c',
+                    '#60bc33',
+                    '#bebc3a',
+                    '#1432c8',
+                    '#c150be',
+                    '#61bdbe',
+                    '#c7c7c7',
+                ];
 
-                    var bold_color_map = [
-                        '#686868',
-                        '#df6f6b',
-                        '#70f467',
-                        '#fef966',
-                        '#6d75ea',
-                        '#ed73fc',
-                        '#73fafd',
-                        '#ffffff'
-                    ];
+                var bold_color_map = [
+                    '#686868',
+                    '#df6f6b',
+                    '#70f467',
+                    '#fef966',
+                    '#6d75ea',
+                    '#ed73fc',
+                    '#73fafd',
+                    '#ffffff'
+                ];
 
-                    if (diff) {
-                        var selector = '#pos-' + row + '-' + col;
+                if (diff) {
+                    var selector = '#pos-' + row + '-' + col;
 
-                        //alert(JSON.stringify(diff));
-                        if (diff['v']) {
-                            var content = diff['v'];
-                            if (content == ' ') { content = '&nbsp;'; }
+                    //alert(JSON.stringify(diff));
+                    if (diff['v']) {
+                        var content = diff['v'];
+                        if (content == ' ') { content = '&nbsp;'; }
 
-                            var color;
+                        var color;
 
-                            if (diff['bo']) {
-                                color = bold_color_map[diff['fg']];
-                            }
-                            else {
-                                color = color_map[diff['fg']];
-                            }
-
-                            $(selector)
-                                .html(content)
-                                .css({color: color});
+                        if (diff['bo']) {
+                            color = bold_color_map[diff['fg']];
                         }
+                        else {
+                            color = color_map[diff['fg']];
+                        }
+
+                        bg_color = color_map[diff['bg']];
+
+                        $(selector)
+                            .html(content)
+                            .css({
+                                color: color,
+                                'background-color': bg_color
+                            });
                     }
                 }
             }
