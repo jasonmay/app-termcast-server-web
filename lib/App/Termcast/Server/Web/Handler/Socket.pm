@@ -67,17 +67,16 @@ sub get {
 sub _squash_events {
     my $self = shift;
     my @events = @_;
-    warn scalar(@events);
 
     my %cells;
     my @results;
 
     return \@events if scalar(@events) == 1;
 
-    foreach my $diff (map { @$_ } @events) {
+    foreach my $diff (map { reverse @$_ } reverse @events) {
         my ($x, $y, $data) = @$diff;
-        foreach my $attr (keys %$data) {
-            $cells{$x}->{$y}->{$attr} = $data->{$attr};
+        while (my ($attr, $value) = each %$data) {
+            $cells{$x}->{$y}->{$attr} ||= $value;
         }
     }
 
