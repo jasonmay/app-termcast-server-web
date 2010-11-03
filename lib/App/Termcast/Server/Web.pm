@@ -2,6 +2,7 @@
 package App::Termcast::Server::Web;
 
 use Tatsumaki::MessageQueue;
+$Tatsumaki::MessageQueue::BacklogLength = 200;
 
 use Plack::Request;
 use Plack::Response;
