@@ -61,9 +61,6 @@ sub get {
     $self->finish();
 }
 
-# TODO this is the long way. when feeling more awake,
-# just start from the end and assign unless defined
-# as opposed to overwrite over and over
 sub _squash_events {
     my $self = shift;
     my @events = @_;
@@ -71,12 +68,21 @@ sub _squash_events {
     my %cells;
     my @results;
 
+    #require JSON; warn JSON::encode_json(
+    #    [
+    #        map { [$_->[0], $_->[1], $_->[2]->{v}] }
+    #        grep { defined $_->[2]->{v} }
+    #        map { @$_ } @events
+    #    ]
+    #);
     return \@events if scalar(@events) == 1;
 
-    foreach my $diff (map { reverse @$_ } reverse @events) {
+    foreach my $diff (map { @$_ } reverse @events) {
         my ($x, $y, $data) = @$diff;
         while (my ($attr, $value) = each %$data) {
-            $cells{$x}->{$y}->{$attr} ||= $value;
+            if (!exists $cells{$x}->{$y}->{$attr}) {
+                $cells{$x}->{$y}->{$attr} = $value;
+            }
         }
     }
 
