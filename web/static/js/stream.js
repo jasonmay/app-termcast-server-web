@@ -17,10 +17,29 @@ var pos_elems = [];
 $(function() {
     tc = $('#container');
 
+    tc.append('<span class="legend">&nbsp;</span>'); // top left corner
+    for (var col = 0; col < COLS; ++col) { // top
+        var extra = '';
+
+        if (col % 10 == 0) {
+            extra = 'style="color: red"';
+        }
+
+        var val = col % 10;
+
+        if (val == 0) {
+            val = col / 10;
+        }
+
+        tc.append('<span class="legend" title="'+ col + '" ' + extra + '>' + val + '</span>');
+    }
+    tc.append('<br />');
+
     for (var row = 0; row < ROWS; ++row) {
+        tc.append('<span class="legend" title="' + row + '">' + (row % 10) + '</span>');
         for (var col = 0; col < COLS; ++col) {
             var span = '<span id="pos-' + row + '-' + col + '">&nbsp;</span>';
-            $('#container').append(span);
+            tc.append(span);
         }
         tc.append('<span></span><br />');
     }

@@ -45,6 +45,11 @@ a:hover {
     */
 }
 
+.legend {
+    color: #888;
+    background-color: #003;
+}
+
 ul.nav {
     margin: 0;
     padding: 0;
