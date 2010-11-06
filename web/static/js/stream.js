@@ -46,8 +46,10 @@ $(function() {
 
 });
 
-function termcast_cb(incoming) {
+function termcast_cb(incoming, status) {
     downloading = 1;
+
+    if (status != 'success') { return; }
     if (typeof(incoming) === 'object') {
         var tc = $('#container');
 
@@ -61,6 +63,11 @@ function termcast_cb(incoming) {
                     col  = change[1],
                     diff = change[2];
 
+                if (typeof(row) != 'string') {
+                    console.log('WARNING: invalid data');
+                    downloading = 0;
+                    return;
+                }
                 var color_map = [
                     '#000000',
                     '#ca311c',
