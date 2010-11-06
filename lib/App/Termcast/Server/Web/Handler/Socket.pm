@@ -47,9 +47,35 @@ sub get {
         $client_id, sub {
             shift(@_) until !@_ or $_[0]->{time} >= $latest{$client_id};
 
-            my $data = $self->_squash_events( map { $_->{data} } @_ );
-            $self->stream_write( [{data => $data}] );
-            $sent = 1;
+            if (!$latest{$client_id}) {
+                #send the entire screen for foundation
+                my $screen = $handle->session->screen;
+
+                my @cells;
+
+                foreach my $x (0 .. @$screen - 1) {
+                    foreach my $y (0 .. @{$screen->[$x]} - 1) {
+                        my $data = $screen->[$x]->[$y];
+                        next unless $data;
+                        next unless scalar(keys %$data);
+
+                        next if !$data->{v};
+                        next if $data->{v} eq ' ' and !$data->{bg};
+
+                        $data->{bo} = 0; # experiment
+                        push @cells, [$x, $y, $data];
+                    }
+                }
+
+                unshift @_, +{data => \@cells};
+            }
+            else {
+                my $data = $self->_squash_events( map { $_->{data} } @_ );
+                $self->stream_write( [{data => $data}] );
+                $sent = 1;
+            }
+
+            $latest{$client_id} = $_[-1]->{time};
         }
     );
 
