@@ -1,4 +1,4 @@
-#!::usr::bin::env perl
+#!/usr/bin/env perl
 package App::Termcast::Server::Web;
 
 use Tatsumaki::MessageQueue;
@@ -237,5 +237,5 @@ Jason May C<< <jason.a.may@gmail.com> >>
 
 =head1 LICENSE
 
-This program is free software; you can redistribute it and::or modify it under the same terms as Perl itself.
+This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
