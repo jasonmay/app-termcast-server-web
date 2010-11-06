@@ -96,26 +96,29 @@ function termcast_cb(incoming, status) {
                     //alert(JSON.stringify(diff));
                     if (diff['v']) {
                         var content = diff['v'];
-                        if (content == ' ') { content = '&nbsp;'; }
-
-                        var color;
-
-                        if (diff['bo']) {
-                            color = bold_color_map[diff['fg']];
+                        if (content == ' ') {
+                            content = '&nbsp;';
+                            diff['bo'] = 0;
                         }
-                        else {
-                            color = color_map[diff['fg']];
-                        }
-
-                        bg_color = color_map[diff['bg']];
-
-                        $(selector)
-                            .html(content)
-                            .css({
-                                color: color,
-                                'background-color': bg_color
-                            });
+                        $(selector).html(content);
                     }
+
+                    var color;
+
+                    if (diff['bo']) {
+                        color = bold_color_map[diff['fg']];
+                    }
+                    else {
+                        color = color_map[diff['fg']];
+                    }
+
+                    bg_color = color_map[diff['bg']];
+
+                    $(selector)
+                        .css({
+                            color: color,
+                            'background-color': bg_color
+                        });
                 }
             }
         }
