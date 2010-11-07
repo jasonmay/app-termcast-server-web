@@ -62,6 +62,7 @@ function add_newline(tc) {
 
 function update_cell_value(cell, diff) {
     if (diff['v']) {
+        //console.log(diff['v']);
         var content = diff['v'];
         if (content == ' ') {
             content = '&nbsp;';
@@ -69,6 +70,14 @@ function update_cell_value(cell, diff) {
         }
         cell.html(content);
     }
+}
+
+function canonicalize_data(diff) {
+    var newdiff = diff;
+
+    if (newdiff.bo === '0') { newdiff.bo = 0; }
+
+    return newdiff;
 }
 
 var color_map = [
@@ -138,15 +147,9 @@ function termcast_cb(incoming, status) {
                 var change = data[j];
                 var row  = change[0],
                     col  = change[1],
-                    diff = change[2];
+                    diff = canonicalize_data(change[2]);
 
-                if (typeof(row) != 'string') {
-                    console.log(JSON.stringify(incoming));
-                    console.log(incoming);
-                    //downloading = 0;
-                    return;
-                }
-
+                //console.log(diff);
                 if (diff) {
 
                     var cell = $( _selector(row, col) );
