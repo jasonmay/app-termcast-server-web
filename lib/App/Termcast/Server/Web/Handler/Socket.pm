@@ -99,7 +99,7 @@ sub _squash_events {
     #        map { @$_ } @events
     #    ]
     #);
-    return \@events if scalar(@events) == 1;
+    return $events[0] if scalar(@events) == 1;
 
     foreach my $diff (map { @$_ } reverse @events) {
         my ($x, $y, $data) = @$diff;
