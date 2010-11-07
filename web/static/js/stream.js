@@ -14,34 +14,111 @@ var ROWS = 24;
 var downloading;
 var pos_elems = [];
 
+function create_cell(tc, row, col) {
+    var span = '<span';
+
+    span += ' id="pos-' + row + '-' + col + '"';
+    span += ' title="(' + row + ', ' + col + ')"';
+
+    span += '>&nbsp;</span>';
+    tc.append(span);
+}
+
+function create_origin(tc) {
+    tc.append('<span class="legend">&nbsp;</span>');
+}
+
+function create_x_axis_node(tc, col) {
+    var extra = '';
+
+    if (col % 10 == 0) {
+        extra = 'style="color: red"';
+    }
+
+    var val = col % 10;
+
+    if (val == 0) {
+        val = col / 10;
+    }
+
+    tc.append(
+        '<span class="legend" title="' + col + '" ' + extra + '>'
+        + val
+        + '</span>'
+    );
+}
+
+function create_y_axis_node(tc, row) {
+    tc.append(
+        '<span class="legend" title="' + row + '">'
+        + (row % 10)
+        + '</span>'
+    );
+}
+
+function add_newline(tc) {
+    tc.append('<br />');
+}
+
+function update_cell_value(cell, diff) {
+    if (diff['v']) {
+        var content = diff['v'];
+        if (content == ' ') {
+            content = '&nbsp;';
+            diff['bo'] = 0;
+        }
+        cell.html(content);
+    }
+}
+
+var color_map = [
+    '#000000', '#ca311c', '#60bc33', '#bebc3a',
+    '#1432c8', '#c150be', '#61bdbe', '#c7c7c7',
+];
+
+var bold_color_map = [
+    '#686868', '#df6f6b', '#70f467', '#fef966',
+    '#6d75ea', '#ed73fc', '#73fafd', '#ffffff'
+];
+function color_cell(cell, diff) {
+
+    var color;
+
+    if (diff['bo']) {
+        color = bold_color_map[diff['fg']];
+    }
+    else {
+        color = color_map[diff['fg']];
+    }
+
+    bg_color = color_map[diff['bg']];
+
+    cell.css({
+        color: color,
+        'background-color': bg_color
+    });
+}
+
+function _selector(row, col) {
+    return '#pos-' + row + '-' + col;
+}
+
 $(function() {
     tc = $('#container');
 
-    tc.append('<span class="legend">&nbsp;</span>'); // top left corner
+    create_origin(tc);
+
     for (var col = 0; col < COLS; ++col) { // top
-        var extra = '';
-
-        if (col % 10 == 0) {
-            extra = 'style="color: red"';
-        }
-
-        var val = col % 10;
-
-        if (val == 0) {
-            val = col / 10;
-        }
-
-        tc.append('<span class="legend" title="'+ col + '" ' + extra + '>' + val + '</span>');
+        create_x_axis_node(tc, col);
     }
-    tc.append('<br />');
+    add_newline(tc);
 
     for (var row = 0; row < ROWS; ++row) {
-        tc.append('<span class="legend" title="' + row + '">' + (row % 10) + '</span>');
+        create_y_axis_node(tc, row);
         for (var col = 0; col < COLS; ++col) {
-            var span = '<span id="pos-' + row + '-' + col + '">&nbsp;</span>';
-            tc.append(span);
+            create_cell(tc, row, col);
         }
-        tc.append('<span></span><br />');
+        add_newline(tc);
     }
 
 });
@@ -64,61 +141,18 @@ function termcast_cb(incoming, status) {
                     diff = change[2];
 
                 if (typeof(row) != 'string') {
-                    console.log('WARNING: invalid data');
-                    downloading = 0;
+                    console.log(JSON.stringify(incoming));
+                    console.log(incoming);
+                    //downloading = 0;
                     return;
                 }
-                var color_map = [
-                    '#000000',
-                    '#ca311c',
-                    '#60bc33',
-                    '#bebc3a',
-                    '#1432c8',
-                    '#c150be',
-                    '#61bdbe',
-                    '#c7c7c7',
-                ];
-
-                var bold_color_map = [
-                    '#686868',
-                    '#df6f6b',
-                    '#70f467',
-                    '#fef966',
-                    '#6d75ea',
-                    '#ed73fc',
-                    '#73fafd',
-                    '#ffffff'
-                ];
 
                 if (diff) {
-                    var selector = '#pos-' + row + '-' + col;
 
-                    //alert(JSON.stringify(diff));
-                    if (diff['v']) {
-                        var content = diff['v'];
-                        if (content == ' ') {
-                            content = '&nbsp;';
-                            diff['bo'] = 0;
-                        }
-                        $(selector).html(content);
-                    }
+                    var cell = $( _selector(row, col) );
 
-                    var color;
-
-                    if (diff['bo']) {
-                        color = bold_color_map[diff['fg']];
-                    }
-                    else {
-                        color = color_map[diff['fg']];
-                    }
-
-                    bg_color = color_map[diff['bg']];
-
-                    $(selector)
-                        .css({
-                            color: color,
-                            'background-color': bg_color
-                        });
+                    update_cell_value(cell, diff);
+                    color_cell(cell, diff);
                 }
             }
         }
@@ -133,7 +167,6 @@ function termcast_cb(incoming, status) {
 
 function update_termcast(res_type, stream_id, client_id) {
     if (downloading) {
-        //console.log('still downloading');
         return;
     }
     downloading = 1;
