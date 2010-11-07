@@ -81,6 +81,16 @@ sub update_screen {
 
             if ($prev) {
                 foreach my $attr (keys %data) {
+
+                    # XXX (resource-unfriendly) hack because bold stuff
+                    #     is busted right now
+                    if ($attr eq 'bo') {
+                        if (($data{v} || '') eq ' ') {
+                            delete $data{bo};
+                        }
+                        next;
+                    }
+
                     delete $data{$attr}
                         if #$prev->{$attr} and
                         ($data{$attr} || '') eq ($prev->{$attr} || '');

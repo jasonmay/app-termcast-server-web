@@ -62,7 +62,7 @@ sub get {
                          next if !$data->{v};
                          next if $data->{v} eq ' ' and !$data->{bg};
 
-                         $data->{bo} = 0; # experiment
+                         #$data->{bo} = 0; # experiment
                          push @cells, [$x, $y, $data];
                      }
                  }
@@ -70,6 +70,7 @@ sub get {
              }
 
             my $data = $self->_squash_events( map { $_->{data} } @_ );
+
             $self->stream_write( [{data => $data}] );
             $sent = 1;
 
