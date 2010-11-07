@@ -5,7 +5,7 @@
 <script src="static/js/jquery-1.4.1.js"></script>
 </head>
 <body>
-<h1>Web Termcast Viewer</h1>
+<img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
 [% IF stream_data.keys.size > 0 %]
 <ul>
 [% FOREACH stream_id = stream_data.keys %]

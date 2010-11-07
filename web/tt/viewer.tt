@@ -14,7 +14,14 @@ $.get('/id', function(data) {
 </script>
 </head>
 <body>
-<h1>Web Termcast Viewer</h1>
+<img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
+<ul class="nav">
+    <li>
+        <a href="/">Menu</a>
+    </li>
+</ul>
+<hr />
+<h2><em>Viewing: [% stream.user %]</em></h2>
 <div id="container"> </div>
 </body>
 </html>

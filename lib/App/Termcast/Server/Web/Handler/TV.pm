@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 package App::Termcast::Server::Web::Handler::TV;
 use base qw(Tatsumaki::Handler);
+use HTML::Entities ();
 use strict;
 use warnings;
 
@@ -17,9 +18,12 @@ sub get {
     my ($self, $stream_id) = @_;
 
     my $web = App::Termcast::Server::Web::Handler::Socket->server;
+    my $stream = $web->get_stream($stream_id);
 
     my $vars = {
         stream_id => $stream_id,
+        stream    => $stream,
+        encode_entities => sub { HTML::Entities::encode_entities(@_) },
     };
 
     $t->process('viewer.tt', $vars, \my $output) or die $t->error();
