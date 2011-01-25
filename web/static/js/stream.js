@@ -2,6 +2,8 @@ var INTERVAL_ID;
 var COLS = 80;
 var ROWS = 24;
 
+var DEBUG = 0;
+
 // two different locks: client side and server side.
 //
 // First level lock: If we're downloading the ajax response,
@@ -115,15 +117,23 @@ function _selector(row, col) {
 $(function() {
     tc = $('#container');
 
-    create_origin(tc);
-
-    for (var col = 0; col < COLS; ++col) { // top
-        create_x_axis_node(tc, col);
+    if (DEBUG) {
+        create_origin(tc);
     }
-    add_newline(tc);
+
+    if (DEBUG) {
+        for (var col = 0; col < COLS; ++col) { // top
+            create_x_axis_node(tc, col);
+        }
+        add_newline(tc);
+    }
 
     for (var row = 0; row < ROWS; ++row) {
-        create_y_axis_node(tc, row);
+
+        if (DEBUG) {
+            create_y_axis_node(tc, row);
+        }
+
         for (var col = 0; col < COLS; ++col) {
             create_cell(tc, row, col);
         }
