@@ -13,6 +13,7 @@ requires 'Path::Dispatcher';
 requires 'Path::Dispatcher::Declarative';
 requires 'AnyEvent';
 requires 'Template';
+requires 'Term::VT102';
 
 auto_install();
 WriteAll();
