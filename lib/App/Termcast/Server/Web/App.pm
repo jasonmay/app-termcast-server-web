@@ -3,11 +3,14 @@ use strict;
 use warnings;
 use parent 'Plack::Component';
 
-use Plack::Util::Accessor qw(tc_socket tt connections);
+use Plack::Util::Accessor qw(tc_socket tt connections hippie);
 use Plack::Builder;
+use Plack::App::Cascade;
+use Web::Hippie::App::JSFiles;
 use AnyMQ;
 
 use App::Termcast::Server::Web::Dispatcher;
+use App::Termcast::Server::Web::Hippie::Handle;
 
 sub call {
     my ($self, $env) = @_;
@@ -19,11 +22,22 @@ sub call {
             sub {
                 my ($env) = @_;
 
+                my $h = $env->{'hippie.handle'};
+
                 if ($env->{PATH_INFO} eq '/new_listener') {
-                    warn "NEW LIESTENRENR";
+                    my $stream_id = $env->{'hippie.args'};
+
+                    my $hh = App::Termcast::Server::Web::Hippie::Handle->new(
+                        stream => $stream_id,
+                        handle => $h,
+                    );
+
+                    $self->hippie->hippie_handles->insert($hh);
                 }
                 else {
-                    warn "NOT NEW LIESTENRENR";
+                    if ($env->{PATH_INFO} eq '/error') {
+                        $self->hippie->handles->remove($h) if $h;
+                    }
                 }
                 return [ '200', [ 'Content-Type' => 'application/hippie' ], [ "" ] ]
             }

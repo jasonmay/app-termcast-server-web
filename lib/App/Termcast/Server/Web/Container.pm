@@ -34,16 +34,16 @@ sub BUILD {
                 my $service = shift;
                 require App::Termcast::Server::Web::App;
 
-                warn $service->param('tt');
                 # XXX weaken
                 return App::Termcast::Server::Web::App->new(
-                    tc_socket  => $service->param('tc_socket'),
-                    hippie     => $service->param('hippie'),
-                    tt         => $service->param('tt'),
+                    tc_socket   => $service->param('tc_socket'),
+                    connections => $service->param('connections'),
+                    hippie      => $service->param('hippie'),
+                    tt          => $service->param('tt'),
                 );
             },
             lifecycle    => 'Singleton',
-            dependencies => ['hippie', 'tt', 'tc_socket'],
+            dependencies => ['hippie', 'tt', 'tc_socket', 'connections'],
         );
 
         service tc_socket => $self->tc_socket;

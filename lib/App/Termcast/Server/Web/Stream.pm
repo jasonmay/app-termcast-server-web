@@ -31,16 +31,6 @@ has username => (
     required => 1,
 );
 
-has vt => (
-    is       => 'ro',
-    isa      => 'Term::VT102::Incremental',
-    default  => sub {
-        Term::VT102::Incremental->new
-    },
-
-    clearer => 'clear_vt',
-);
-
 sub connect {
     my $self = shift;
     my $socket = shift;
@@ -52,24 +42,19 @@ sub connect {
             on_read => sub {
                 my $h = shift;
 
-                if ($h->{rbuf} =~ s/.*\e\[2J//sm) {
+                my @hh = $self->connections->hippie->hippie_handles->members;
+                $h->{rbuf} =~ s/.\e\[2J/\e\[H\e\[2J/s;
+                foreach my $hippie_handle (@hh) {
+                    if ($h->{rbuf} =~ /\e\[2J/s) {
+                        $hippie_handle->clear_vt;
+                    }
 
-                    # reset so its buffer is 100% empty
-                    $self->clear_vt;
+
+                    $hippie_handle->send_to_browser($h->rbuf);
+
                 }
-                $self->vt->process($h->rbuf);
-
-                my $updates = $self->vt->get_increment();
-
-                warn "typety type";
-                # TODO send to all the appropriate hippie handles
-                my $beepbeepbeepbooooop = {
-                    type    => 'message',
-                    data    => $updates,
-                    time => scalar Time::HiRes::gettimeofday,
-                };
-
                 $h->{rbuf} = '';
+
             },
             on_error => sub {
                 my ($h, $fatal, $error) = @_;
@@ -83,10 +68,13 @@ sub connect {
             },
         );
 
+        my $fd = fileno($handle->fh);
         $self->handle($handle);
         $self->connections->set_stream(
-            fileno($handle->fh) => $self,
+            $fd => $self,
         );
+
+        $self->connections->stream_to_fd->{$self->id} = $fd;
     };
 }
 

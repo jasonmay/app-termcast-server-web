@@ -5,11 +5,16 @@
 <link href="../static/styles/viewer.css" media="screen" rel="stylesheet" type="text/css" />
 <script src="../static/js/jquery-1.4.1.js"></script>
 <script type="text/javascript" src="../static/js/stream.js"> </script>
+<script src="/jquery.ev.js"></script>
+<script src="/DUI.js"></script>
+<script src="/Stream.js"></script>
+<script src="/hippie.js"></script>
+<script src="/json2.js"></script>
 <script type="text/javascript">
 // <!--
 $(function() {
     var hippie = new Hippie(
-    document.location.host, 5, function() {
+    document.location.host, '[% stream.id %]', function() {
         console.log("hippie connected");
     },
     function() {
@@ -31,7 +36,7 @@ $(function() {
     </li>
 </ul>
 <hr />
-<h2><em>Viewing: [% stream.user %]</em></h2>
+<h2><em>Viewing: [% stream.username %]</em></h2>
 <div id="container"> </div>
 </body>
 </html>

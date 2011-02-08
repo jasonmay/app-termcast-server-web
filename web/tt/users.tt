@@ -11,7 +11,7 @@
 <p>The following sessions are in progress:</p>
 <ul>
 [% FOREACH fd = connections.streams.keys %]
-<li><a href="view/[% connections.streams.$fd.id %]">[% connections.streams.$fd.user %]</a></li>
+<li><a href="tv/[% connections.streams.$fd.id %]">[% connections.streams.$fd.username %]</a></li>
 [% END %]
 </ul>
 [% ELSE %]
