@@ -31,13 +31,12 @@ sub call {
 
         mount '/' => builder {
             enable 'Plack::Middleware::Static',
-                path => qr!^/?static/!, root => 'web/';
+                path => qr!^/?(?:static/|favicon\.ico)!, root => 'web/';
 
-            sub {
+            my $dispatch_app = sub {
                 my ($env) = @_;
                 #use Data::Dumper::Concise; warn Dumper($env);
 
-                warn $self->tt;
                 my $dispatch = App::Termcast::Server::Web::Dispatcher->dispatch(
                     $env->{PATH_INFO},
                     tt          => $self->tt,
@@ -53,11 +52,19 @@ sub call {
                     );
                 }
                 else {
-                    $body = "nobody";
+                    return [ '404', [ 'Content-Type' => 'text/plain' ], [ "File Not Found" ] ];
                 }
 
                 return [ '200', [ 'Content-Type' => 'text/html' ], [ $body ] ];
-            }
+            };
+
+
+            Plack::App::Cascade->new(
+                apps => [
+                    Web::Hippie::App::JSFiles->new->to_app(),
+                    $dispatch_app,
+                ]
+            );
         };
 
     };
