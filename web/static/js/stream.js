@@ -4,16 +4,6 @@ var ROWS = 24;
 
 var DEBUG = 0;
 
-// two different locks: client side and server side.
-//
-// First level lock: If we're downloading the ajax response,
-// prevent beginning a download from a succeeding timer process.
-//
-// Second level lock: When processing the terminal screen, don't
-// let any other webserver processes begin. Without this, the
-// terminal frames will not cache properly.
-
-var downloading;
 var pos_elems = [];
 
 function create_cell(tc, row, col) {
@@ -142,55 +132,25 @@ $(function() {
 
 });
 
-function termcast_cb(incoming, status) {
-    downloading = 1;
-
-    if (status != 'success') { return; }
-    if (typeof(incoming) === 'object') {
+function termcast_cb(data) {
+    console.log(data);
+    if (typeof(data) === 'object') {
         var tc = $('#container');
 
-        for (var i = 0; i < incoming.length; i++) {
-            obj = incoming[i];
-            data = obj.data;
+        for (j = 0; j < data.length; j++) {
+            var change = data[j];
+            var row  = change[0],
+                col  = change[1],
+                diff = canonicalize_data(change[2]);
 
-            for (var j = 0; j < data.length; j++) {
-                var change = data[j];
-                var row  = change[0],
-                    col  = change[1],
-                    diff = canonicalize_data(change[2]);
+            if (diff) {
 
-                //console.log(diff);
-                if (diff) {
+                var cell = $( _selector(row, col) );
 
-                    var cell = $( _selector(row, col) );
-
-                    update_cell_value(cell, diff);
-                    color_cell(cell, diff);
-                }
+                update_cell_value(cell, diff);
+                color_cell(cell, diff);
             }
         }
     }
-    else {
-        clearInterval(INTERVAL_ID);
-        console.log('got recv, but invalid data');
-        window.location = '/';
-    }
-    downloading = 0;
 }
 
-function update_termcast(res_type, stream_id, client_id) {
-    if (downloading) {
-        return;
-    }
-    downloading = 1;
-    var url = '/socket/' + stream_id + '/' + res_type + '?client_id=' + client_id;
-    $.get(url, termcast_cb);
-}
-
-function start_stream(stream_id, client_id) {
-    update_termcast('fresh', stream_id, client_id);
-    INTERVAL_ID = setInterval(
-        "update_termcast('diff', '" + stream_id + "', '" + client_id + "')",
-        300
-    );
-}

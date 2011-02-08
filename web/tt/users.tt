@@ -7,11 +7,11 @@
 <body>
 <img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
 <hr />
-[% IF stream_data.keys.size > 0 %]
+[% IF connections.streams.keys.size > 0 %]
 <p>The following sessions are in progress:</p>
 <ul>
-[% FOREACH stream_id = stream_data.keys %]
-<li><a href="view/[% stream_id %]">[% stream_data.$stream_id.user %]</a></li>
+[% FOREACH fd = connections.streams.keys %]
+<li><a href="view/[% connections.streams.$fd.id %]">[% connections.streams.$fd.user %]</a></li>
 [% END %]
 </ul>
 [% ELSE %]

@@ -7,9 +7,19 @@
 <script type="text/javascript" src="../static/js/stream.js"> </script>
 <script type="text/javascript">
 // <!--
-$.get('/id', function(data) {
-    start_stream('[% stream_id %]', data);
+$(function() {
+    var hippie = new Hippie(
+    document.location.host, 5, function() {
+        console.log("hippie connected");
+    },
+    function() {
+        console.log("hippie disconnected");
+    },
+    function(e) {
+        termcast_cb(e);
+    } );
 });
+
 // -->
 </script>
 </head>

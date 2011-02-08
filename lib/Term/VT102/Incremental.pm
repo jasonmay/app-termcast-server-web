@@ -1,41 +1,16 @@
-#!/usr/bin/env perl
-package App::Termcast::Server::Web::SessionData;
-use Moose::Role;
+package Term::VT102::Incremental;
+use Moose;
 use Term::VT102;
 
-=head1 NAME
-
-Foo -
-
-=head1 SYNOPSIS
-
-
-=head1 DESCRIPTION
-
-
-=cut
-
-has cols => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 80,
-);
-
-has rows => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 24,
-);
-
 has vt => (
-    is         => 'ro',
-    isa        => 'Term::VT102',
-    lazy_build => 1,
+    is      => 'ro',
+    isa     => 'Term::VT102',
+    handles => ['process', 'rows' ,'cols'],
 );
 
-has screen => (
+has _screen => (
     is        => 'ro',
-    isa       => 'ArrayRef[ArrayRef[HashRef]]', # lol
+    isa       => 'ArrayRef[ArrayRef[HashRef]]',
     default   => sub {
         my $self = shift;
         my ($rows, $cols) = ($self->rows, $self->cols);
@@ -48,17 +23,20 @@ has screen => (
     },
 );
 
-sub _build_vt {
-    my $self = shift;
-    return Term::VT102->new(
-        cols => $self->cols,
-        rows => $self->rows,
-    );
-}
+around BUILDARGS => sub {
+    my $orig = shift;
+    my $class = shift;
 
-sub update_screen {
+    my @vt_args  = @_;
+
+    my $vt = Term::VT102->new(@vt_args);
+
+    return $class->$orig(vt => $vt);
+};
+
+sub get_increment {
     my $self = shift;
-    my ($vt, $screen) = ($self->vt, $self->screen);
+    my ($vt, $screen) = ($self->vt, $self->_screen);
 
     my %updates;
     my @data;
@@ -84,12 +62,12 @@ sub update_screen {
 
                     # XXX (resource-unfriendly) hack because bold stuff
                     #     is busted right now
-                    if ($attr eq 'bo') {
-                        if (($data{v} || '') eq ' ') {
-                            delete $data{bo};
-                        }
-                        next;
-                    }
+                    #if ($attr eq 'bo') {
+                    #    if (($data{v} || '') eq ' ') {
+                    #        delete $data{bo};
+                    #    }
+                    #    next;
+                    #}
 
                     delete $data{$attr}
                         if #$prev->{$attr} and
@@ -104,20 +82,7 @@ sub update_screen {
     return \@data;
 }
 
-no Moose::Role;
+__PACKAGE__->meta->make_immutable;
+no Moose;
 
 1;
-
-__END__
-
-=head1 METHODS
-
-
-=head1 AUTHOR
-
-Jason May C<< <jason.a.may@gmail.com> >>
-
-=head1 LICENSE
-
-This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
-
