@@ -2,7 +2,6 @@ package App::Termcast::Server::Web::Stream;
 use Moose;
 
 use AnyEvent::Socket;
-use Time::HiRes;
 
 use Term::VT102::Incremental;
 

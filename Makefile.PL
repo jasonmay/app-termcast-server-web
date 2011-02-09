@@ -6,11 +6,13 @@ all_from       'lib/App/Termcast/Server/Web.pm';
 build_requires 'Test::More';
 
 requires 'Plack';
-requires 'Twiggy';
+requires 'Web::Hippie';
+requires 'AnyMQ';
 requires 'Moose';
-requires 'MooseX::NonMoose';
 requires 'Path::Dispatcher';
 requires 'Path::Dispatcher::Declarative';
+requires 'Bread::Board';
+requires 'Set::Object';
 requires 'AnyEvent';
 requires 'Template';
 requires 'Term::VT102';
