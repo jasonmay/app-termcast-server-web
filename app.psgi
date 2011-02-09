@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use lib 'lib';
-use App::Termcast::Server::Web::Container;
+use App::Termcast::Server::Web;
 
 
 my $socket;
@@ -13,4 +13,4 @@ for (0 .. @ARGV-1) {
     }
 }
 
-App::Termcast::Server::Web::Container->new(tc_socket => $socket)->final_app;
+App::Termcast::Server::Web->new(tc_socket => $socket)->final_app;

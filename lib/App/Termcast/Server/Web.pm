@@ -1,4 +1,4 @@
-package App::Termcast::Server::Web::Container;
+package App::Termcast::Server::Web;
 use Moose;
 use Bread::Board;
 
