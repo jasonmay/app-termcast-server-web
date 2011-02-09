@@ -11,7 +11,7 @@ requires 'AnyMQ';
 requires 'Moose';
 requires 'Path::Dispatcher';
 requires 'Path::Dispatcher::Declarative';
-requires 'Bread::Board';
+requires 'Bread::Board' => '0.15';
 requires 'Set::Object';
 requires 'AnyEvent';
 requires 'Template';
