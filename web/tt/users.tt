@@ -7,7 +7,7 @@
 <body>
 <img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
 <hr />
-[% IF connections.streams.keys.size > 0 %]
+[% IF connections.streams.keys.size %]
 <p>The following sessions are in progress:</p>
 <ul>
 [% FOREACH fd = connections.streams.keys %]

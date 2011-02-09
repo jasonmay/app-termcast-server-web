@@ -13,6 +13,13 @@
 <script type="text/javascript">
 // <!--
 $(function() {
+    write_cells(80, 24);
+    var pos = $('#container').offset();
+    var width = $('#container').width();
+
+    var border_width = 10;
+    $('#caption').width(width + border_width * 2);
+
     var hippie = new Hippie(
     document.location.host, '[% stream.id %]', function() {
         console.log("hippie connected");
@@ -36,7 +43,7 @@ $(function() {
     </li>
 </ul>
 <hr />
-<h2><em>Viewing: [% stream.username %]</em></h2>
+<div id="caption">Viewing: [% stream.username %]</div>
 <div id="container"> </div>
 </body>
 </html>

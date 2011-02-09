@@ -1,6 +1,9 @@
 body {
     font-family: helvetica,sans-serif;
     font-size: 80%;
+    background: url('/static/images/termcast_gradient.png');
+    background-repeat: repeat-x;
+    background-color: #ffe;
 }
 
 a:link {
@@ -29,20 +32,28 @@ a:hover {
     width: 60%;
 }
 
+#caption {
+    padding-left: 0;
+    margin-left:  0;
+    background-color: #aaa;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    font-size: 125%;
+    letter-spacing: 2;
+}
+
 #container {
-    margin-left: 12em;
-    padding: 10px;
+    margin-left: 0;
+    padding: 0;
     width: 50em;
 
     background-color: black;
     font-family: monaco, consolas, lucida console, monospace;
     font-size: 80%;
-
-    /*
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    */
+    border: solid 10px #aaa;
+    border-top: 0;
 }
 
 .legend {
@@ -56,6 +67,6 @@ ul.nav {
 }
 
 hr {
-    border: solid 1px black;
+    border: dashed 1px #ca8;
 }
 

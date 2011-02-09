@@ -1,6 +1,4 @@
 var INTERVAL_ID;
-var COLS = 80;
-var ROWS = 24;
 
 var DEBUG = 0;
 
@@ -104,7 +102,7 @@ function _selector(row, col) {
     return '#pos-' + row + '-' + col;
 }
 
-$(function() {
+function write_cells(cols, lines) {
     tc = $('#container');
 
     if (DEBUG) {
@@ -112,28 +110,28 @@ $(function() {
     }
 
     if (DEBUG) {
-        for (var col = 0; col < COLS; ++col) { // top
+        for (var col = 0; col < cols; ++col) { // top
             create_x_axis_node(tc, col);
         }
         add_newline(tc);
     }
 
-    for (var row = 0; row < ROWS; ++row) {
+    for (var row = 0; row < lines; ++row) {
 
         if (DEBUG) {
             create_y_axis_node(tc, row);
         }
 
-        for (var col = 0; col < COLS; ++col) {
+        for (var col = 0; col < cols; ++col) {
             create_cell(tc, row, col);
         }
         add_newline(tc);
     }
 
-});
+}
 
 function termcast_cb(data) {
-    console.log(data);
+    //console.log(data);
     if (typeof(data) === 'object') {
         var tc = $('#container');
 
