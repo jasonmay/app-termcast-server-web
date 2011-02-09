@@ -31,6 +31,12 @@ has username => (
     required => 1,
 );
 
+has buffer => (
+    is       => 'rw',
+    isa      => 'Str',
+    default  => '',
+);
+
 sub connect {
     my $self = shift;
     my $socket = shift;
@@ -43,16 +49,19 @@ sub connect {
                 my $h = shift;
 
                 my @hh = $self->connections->hippie->hippie_handles->members;
-                $h->{rbuf} =~ s/.\e\[2J/\e\[H\e\[2J/s;
+                if ($h->{rbuf} =~ s/.\e\[2J/\e\[H\e\[2J/s) {
+                    $self->buffer('');
+                }
+
                 foreach my $hippie_handle (@hh) {
+                    next unless $hippie_handle->stream eq $self->id;
                     if ($h->{rbuf} =~ /\e\[2J/s) {
                         $hippie_handle->clear_vt;
                     }
 
-
                     $hippie_handle->send_to_browser($h->rbuf);
-
                 }
+                $self->{buffer} .= $h->{rbuf};
                 $h->{rbuf} = '';
 
             },

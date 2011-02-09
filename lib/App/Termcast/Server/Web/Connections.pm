@@ -120,6 +120,14 @@ sub make_stream {
 
 }
 
+sub get_stream {
+    my $self      = shift;
+    my $stream_id = shift;
+
+    my $fd = $self->stream_to_fd->{$stream_id};
+    return $self->streams->{$fd};
+}
+
 sub vivify_connection {
     my $self = shift;
 

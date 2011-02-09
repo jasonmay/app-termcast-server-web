@@ -32,7 +32,12 @@ sub call {
                         handle => $h,
                     );
 
+                    my $stream = $self->connections->get_stream($stream_id);
+
                     $self->hippie->hippie_handles->insert($hh);
+
+                    # send buffer to get the viewer caught up
+                    $hh->send_to_browser($stream->buffer);
                 }
                 else {
                     if ($env->{PATH_INFO} eq '/error') {
