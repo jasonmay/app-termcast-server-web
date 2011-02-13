@@ -36,6 +36,18 @@ has buffer => (
     default  => '',
 );
 
+has cols => (
+    is       => 'ro',
+    isa      => 'Num',
+    default  => 80,
+);
+
+has lines => (
+    is       => 'ro',
+    isa      => 'Num',
+    default  => 24,
+);
+
 sub connect {
     my $self = shift;
     my $socket = shift;
@@ -46,19 +58,22 @@ sub connect {
             fh => $fh,
             on_read => sub {
                 my $h = shift;
+                #warn "$h->{rbuf}\n";
 
                 my @hh = $self->connections->hippie->hippie_handles->members;
                 if ($h->{rbuf} =~ s/.\e\[2J/\e\[H\e\[2J/s) {
                     $self->buffer('');
                 }
 
+                my $buf = '' . $h->{rbuf};
                 foreach my $hippie_handle (@hh) {
                     next unless $hippie_handle->stream eq $self->id;
-                    if ($h->{rbuf} =~ /\e\[2J/s) {
+                    if ($buf =~ /\e\[2J/s) {
                         $hippie_handle->clear_vt;
                     }
 
-                    $hippie_handle->send_to_browser($h->rbuf);
+                    #warn length($buf);
+                    $hippie_handle->send_to_browser($buf);
                 }
                 $self->{buffer} .= $h->{rbuf};
                 $h->{rbuf} = '';

@@ -20,6 +20,22 @@ has vt => (
     clearer => 'clear_vt',
 );
 
+around BUILDARGS => sub {
+    my $orig = shift;
+    my $self = shift;
+    warn "@_";
+    my %args = @_;
+
+    if ($args{cols} and $args{lines} and not $args{vt}) {
+        $args{vt} = Term::VT102::Incremental->new(
+            rows => delete $args{lines},
+            cols => delete $args{cols},
+        );
+    }
+
+    $self->$orig(%args);
+};
+
 sub _build_vt {
     Term::VT102::Incremental->new();
 }

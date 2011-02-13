@@ -13,9 +13,12 @@
 <script type="text/javascript">
 // <!--
 $(function() {
-    write_cells(80, 24);
+    write_cells([% stream.cols %], [% stream.lines %]);
+
+    var width = $('#pos-1-1').width() * [% stream.cols %];
+
     var pos = $('#container').offset();
-    var width = $('#container').width();
+    $('#container').width(width);
 
     var border_width = 10;
     $('#caption').width(width + border_width * 2);
@@ -43,7 +46,7 @@ $(function() {
     </li>
 </ul>
 <hr />
-<div id="caption">Viewing: [% stream.username %]</div>
+<div id="caption">Viewing: [% stream.username %] ([% stream.cols %]x[% stream.lines %])</div>
 <div id="container"> </div>
 </body>
 </html>

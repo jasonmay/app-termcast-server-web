@@ -110,14 +110,20 @@ sub make_stream {
     my $self       = shift;
     my %args       = @_;
 
-    my $stream = App::Termcast::Server::Web::Stream->new(
+    my %params = (
         id          => $args{session_id},
         username    => $args{user},
         connections => $self,
     );
 
-    $stream->connect($args{socket});
+    if ($args{geometry}) {
+        @params{'cols', 'lines'} = @{$args{geometry}};
+    }
 
+    #use Data::Dumper::Concise; warn Dumper(\%params);
+    my $stream = App::Termcast::Server::Web::Stream->new(%params);
+
+    $stream->connect($args{socket});
 }
 
 sub get_stream {

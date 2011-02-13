@@ -27,12 +27,14 @@ sub call {
                 if ($env->{PATH_INFO} eq '/new_listener') {
                     my $stream_id = $env->{'hippie.args'};
 
+                    my $stream = $self->connections->get_stream($stream_id);
+
                     my $hh = App::Termcast::Server::Web::Hippie::Handle->new(
                         stream => $stream_id,
                         handle => $h,
+                        lines => $stream->lines,
+                        cols  => $stream->cols,
                     );
-
-                    my $stream = $self->connections->get_stream($stream_id);
 
                     $self->hippie->hippie_handles->insert($hh);
 

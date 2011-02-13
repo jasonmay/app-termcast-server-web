@@ -29,7 +29,7 @@ a:hover {
     border-radius: 12px;
     padding: 4px 12px;
     color: black;
-    width: 60%;
+    /*width: 60%;*/
 }
 
 #caption {
@@ -47,7 +47,7 @@ a:hover {
 #container {
     margin-left: 0;
     padding: 0;
-    width: 50em;
+    /*width: 50em;*/
 
     background-color: black;
     font-family: monaco, consolas, lucida console, monospace;
