@@ -23,11 +23,10 @@ has vt => (
 around BUILDARGS => sub {
     my $orig = shift;
     my $self = shift;
-    warn "@_";
     my %args = @_;
 
     if ($args{cols} and $args{lines} and not $args{vt}) {
-        $args{vt} = Term::VT102::Incremental->new(
+        $args{vt} = $self->make_vt(
             rows => delete $args{lines},
             cols => delete $args{cols},
         );
@@ -36,8 +35,16 @@ around BUILDARGS => sub {
     $self->$orig(%args);
 };
 
-sub _build_vt {
-    Term::VT102::Incremental->new();
+sub _build_vt { shift->make_vt; }
+
+sub make_vt {
+    my $self = shift;
+    my %args = @_;
+
+    my $vt = Term::VT102::Incremental->new(%args);
+    $vt->vt->option_set('LINEWRAP', 1);
+
+    return $vt;
 }
 
 sub send_to_browser {
