@@ -15,7 +15,7 @@ requires 'Bread::Board' => '0.15';
 requires 'Set::Object';
 requires 'AnyEvent';
 requires 'Template';
-requires 'Term::VT102';
+requires 'Term::VT102::Incremental';
 
 auto_install();
 WriteAll();
