@@ -145,8 +145,11 @@ function termcast_cb(data) {
 
                 var cell = $( _selector(row, col) );
 
-                update_cell_value(cell, diff);
-                color_cell(cell, diff);
+                if (diff['v'])
+                    update_cell_value(cell, diff);
+
+                if (diff['fg'] || diff['bg'])
+                    color_cell(cell, diff);
             }
         }
     }
