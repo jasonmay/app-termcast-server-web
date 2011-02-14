@@ -42,7 +42,7 @@ sub make_vt {
     my %args = @_;
 
     my $vt = Term::VT102::Incremental->new(%args);
-    $vt->vt->option_set('LINEWRAP', 1);
+    #$vt->vt->option_set('LINEWRAP', 1);
 
     return $vt;
 }
