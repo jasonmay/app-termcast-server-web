@@ -56,10 +56,17 @@ a:hover {
     border-top: 0;
 }
 
+#notice {
+    color: #b00;
+    font-weight: bold;
+}
+
 .legend {
     color: black;
     background-color: white;
 }
+
+span { color: #666; }
 
 ul.nav {
     margin: 0;

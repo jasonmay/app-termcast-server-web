@@ -12,9 +12,8 @@
 <script src="/json2.js"></script>
 <script type="text/javascript">
 // <!--
-$(function() {
-    write_cells([% stream.cols %], [% stream.lines %]);
 
+function setup_terminal() {
     var width = $('#pos-1-1').width() * [% stream.cols %];
 
     var pos = $('#container').offset();
@@ -22,13 +21,25 @@ $(function() {
 
     var border_width = 10;
     $('#caption').width(width + border_width * 2);
+}
+
+$(function() {
+
+    $('#notice').text('Connecting.');
+    $('#terminal').hide();
 
     var hippie = new Hippie(
     document.location.host, '[% stream.id %]', function() {
-        console.log("hippie connected");
+        write_cells([% stream.cols %], [% stream.lines %]);
+        $('#notice').fadeOut('fast', function() {
+            $('#terminal').fadeIn('fast');
+            setup_terminal();
+        });
     },
     function() {
-        console.log("hippie disconnected");
+        $('#container').slideUp('slow', function() {
+            $('#notice').html("Stream appears to be down.").fadeIn('slow');
+        });
     },
     function(e) {
         termcast_cb(e);
@@ -46,8 +57,11 @@ $(function() {
     </li>
 </ul>
 <hr />
+<div id="terminal">
 <div id="caption">Viewing: [% stream.username %] ([% stream.cols %]x[% stream.lines %])</div>
 <div id="container"> </div>
+</div>
+<div id="notice"> </div>
 </body>
 </html>
 
