@@ -42,7 +42,7 @@ $(function() {
         });
     },
     function(e) {
-        termcast_cb(e);
+        termcast_cb(e, [% stream.cols %], [% stream.lines %]);
     } );
 });
 

@@ -70,6 +70,7 @@ sub connect {
                     next unless $hippie_handle->stream eq $self->id;
                     if ($buf =~ /\e\[2J/s) {
                         $hippie_handle->clear_vt;
+                        $hippie_handle->send_clear_to_browser();
                     }
 
                     #warn length($buf);

@@ -98,6 +98,16 @@ function color_cell(cell, diff) {
     });
 }
 
+function clear_cells(cols, lines) {
+    for (line = 0; line < lines; line++) {
+        for (col = 0; col < cols; col++) {
+            var cell = _selector(line, col);
+            $(cell).html('');
+            $(cell).css({'background-color': 'black'});
+        }
+    }
+}
+
 function _selector(row, col) {
     return '#pos-' + row + '-' + col;
 }
@@ -130,7 +140,7 @@ function write_cells(cols, lines) {
 
 }
 
-function termcast_cb(data) {
+function termcast_cb(data, cols, lines) {
     //console.log(data);
     if (typeof(data) === 'object') {
         var tc = $('#container');
@@ -145,11 +155,15 @@ function termcast_cb(data) {
 
                 var cell = $( _selector(row, col) );
 
+                if (diff['clear'])
+                    clear_cells(cols, lines);
+
                 if (diff['v'])
                     update_cell_value(cell, diff);
 
                 if (diff['fg'] || diff['bg'])
                     color_cell(cell, diff);
+
             }
         }
     }

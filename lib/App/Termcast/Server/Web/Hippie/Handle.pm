@@ -47,11 +47,16 @@ sub make_vt {
     return $vt;
 }
 
+sub send_clear_to_browser {
+    my $self = shift;
+
+    $self->handle->send_msg( [[0, 0, {clear => 1}]] );
+}
+
 sub send_to_browser {
     my $self = shift;
     my $buf  = shift;
 
-    $self->vt;
     $self->vt->process($buf);
     my $updates = $self->vt->get_increment();
 
