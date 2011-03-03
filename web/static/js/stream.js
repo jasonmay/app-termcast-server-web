@@ -168,3 +168,131 @@ function termcast_cb(data, cols, lines) {
     }
 }
 
+var cell_height = 16;
+var spacing     = 1.25;
+function set_font(context) {
+    context.font = Math.floor(cell_height / spacing) + "pt Monaco,'Bitstream Vera Sans Mono',monospace";
+    context.textBaseline = 'top';
+}
+
+function set_screen_value(screen, col, line, key, value) {
+    if (!col) col = '0'; if (!line) line = '0';
+
+    if (typeof(screen)            === 'undefined') screen            = {};
+    if (typeof(screen[col])       === 'undefined') { screen[col]       = {}; }
+    if (typeof(screen[col][line]) === 'undefined') screen[col][line] = {};
+
+    screen[col][line][key] = value;
+}
+
+function get_screen_value(screen, col, line, key) {
+    if (typeof(screen)            === 'undefined') return undefined;
+    if (typeof(screen[col])       === 'undefined') return undefined;
+    if (typeof(screen[col][line]) === 'undefined') return undefined;
+
+    return screen[col][line][key];
+}
+
+function init_canvas(canvas, cols, lines) {
+    var context = canvas.getContext('2d');
+
+    // get the width of the letter M in our font
+    set_font(context);
+    var cell_width = context.measureText('M').width;
+    canvas.width  = Math.floor(cell_width * cols * spacing);
+    canvas.height = Math.floor(cell_height * lines * spacing);
+
+    var border_width = 10;
+    $('#caption').width(canvas.width + border_width * 2);
+    // ugh, have to set the font again after adjusting the canvas geometry
+    set_font(context);
+}
+
+function update_canvas(data, context, screen, cols, lines) {
+    if (typeof(data) === 'object') {
+        for (j = 0; j < data.length; j++) {
+            var change = data[j];
+            var line  = change[0],
+                col  = change[1],
+                diff = canonicalize_data(change[2]);
+
+            if (diff) {
+                context.fillStyle = color_map[7];
+                c_update_cell_value(col, line, context, diff, screen);
+
+                if (diff['clear']) {
+                    // hack to clear canvas
+                    context.canvas.width = context.canvas.width;
+                    set_font(context);
+                }
+            }
+        }
+    }
+}
+
+function c_update_cell_value(col, line, context, diff, screen) {
+    if (diff['v'] == '' || typeof(diff['v']) === 'undefined') { return; }
+
+    var cell_width = context.measureText('M').width;
+
+    var mod_height = Math.floor(cell_height * spacing);
+
+    // FIXME track previous bg so we aren't clobbering!!
+    context.fillStyle = '#000';
+    context.fillRect(
+        col * cell_width,
+        line * mod_height,
+        cell_width, mod_height
+    );
+
+    c_update_cell_bg(col, line, context, diff, screen);
+    c_update_cell_fg(col, line, context, diff, screen);
+
+    if (diff['v'] == ' ') { return; }
+    context.fillText(diff['v'], col * cell_width, line * mod_height);
+}
+
+function c_update_cell_bg(col, line, context, diff, screen) {
+    return; // let's not use bg for now
+    if (typeof(diff['bg']) === undefined) { return; }
+    var bg_color   = color_map[diff['bg']];
+    var cell_width = context.measureText('M').width;
+
+    var mod_height = Math.floor(cell_height * spacing);
+
+    context.fillStyle = bg_color;
+    context.fillRect(
+        col * cell_width,
+        line * mod_height,
+        cell_width, mod_height
+    );
+}
+
+function c_update_cell_fg(col, line, context, diff, screen) {
+    var color;
+
+    var map;
+    if (diff.bo) {
+        map = bold_color_map;
+    }
+    else {
+        map = color_map;
+    }
+
+    if (!diff['fg']) {
+        fg = get_screen_value(screen, col, line, 'fg');
+        if (typeof(fg) === 'undefined') {
+            color = color_map[7];
+        }
+        else {
+            color = map[fg];
+        }
+    }
+    else {
+        set_screen_value(screen, col, line, 'fg', diff['fg']);
+        color = map[diff['fg']];
+    }
+
+
+    context.fillStyle = color;
+}

@@ -26,24 +26,47 @@ function setup_terminal() {
 $(function() {
 
     $('#notice').text('Connecting.');
-    $('#terminal').hide();
+//    $('#terminal').hide();
 
-    var hippie = new Hippie(
-    document.location.host, '[% stream.id %]', function() {
-        write_cells([% stream.cols %], [% stream.lines %]);
-        $('#notice').fadeOut('fast', function() {
-            $('#terminal').fadeIn('fast');
-            setup_terminal();
-        });
-    },
-    function() {
+    var canvas = document.getElementById('terminal_canvas');
+    var connect_func, message_func, error_func;
+    var screen = {};
+
+    if (canvas && canvas.getContext) {
+        connect_func = function() {
+            $('#notice').hide();
+            console.log(canvas);
+            init_canvas(canvas, [% stream.cols %], [% stream.lines %]);
+        };
+
+        message_func = function(data) {
+            update_canvas(data, canvas.getContext('2d'), screen, [% stream.cols %], [% stream.lines %]);
+        };
+    }
+    else {
+        connect_func = function() {
+            write_cells([% stream.cols %], [% stream.lines %]);
+            $('#notice').fadeOut('fast', function() {
+                $('#terminal').fadeIn('fast');
+                setup_terminal();
+            });
+        };
+
+        message_func = function(data) {
+            termcast_cb(data, [% stream.cols %], [% stream.lines %]);
+        };
+    }
+
+    error_func = function() {
         $('#container').slideUp('slow', function() {
             $('#notice').html("Stream appears to be down.").fadeIn('slow');
         });
-    },
-    function(e) {
-        termcast_cb(e, [% stream.cols %], [% stream.lines %]);
-    } );
+    };
+
+    var hippie = new Hippie(
+        document.location.host, '[% stream.id %]',
+        connect_func, error_func, message_func
+    );
 });
 
 // -->
@@ -59,7 +82,11 @@ $(function() {
 <hr />
 <div id="terminal">
 <div id="caption">Viewing: [% stream.username %] ([% stream.cols %]x[% stream.lines %])</div>
+<canvas id="terminal_canvas">
+<!--<canvas id="terminal_canvas">-->
 <div id="container"> </div>
+</canvas>
+<!--</canvas>-->
 </div>
 <div id="notice"> </div>
 </body>

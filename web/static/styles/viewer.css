@@ -44,7 +44,7 @@ a:hover {
     letter-spacing: 2;
 }
 
-#container {
+#container, #terminal_canvas {
     margin-left: 0;
     padding: 0;
     /*width: 50em;*/
