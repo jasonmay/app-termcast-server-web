@@ -52,7 +52,6 @@ function add_newline(tc) {
 
 function update_cell_value(cell, diff) {
     if (diff['v']) {
-        //console.log(diff['v']);
         var content = diff['v'];
         if (content == ' ') {
             content = '&nbsp;';
@@ -79,6 +78,7 @@ var bold_color_map = [
     '#686868', '#df6f6b', '#70f467', '#fef966',
     '#6d75ea', '#ed73fc', '#73fafd', '#ffffff'
 ];
+
 function color_cell(cell, diff) {
 
     var color;
@@ -141,7 +141,6 @@ function write_cells(cols, lines) {
 }
 
 function termcast_cb(data, cols, lines) {
-    //console.log(data);
     if (typeof(data) === 'object') {
         var tc = $('#container');
 

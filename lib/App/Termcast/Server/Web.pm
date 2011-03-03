@@ -32,15 +32,10 @@ sub BUILD {
         service plack_app => (
             block => sub {
                 my $service = shift;
-                require App::Termcast::Server::Web::App;
+                my $app_class = 'App::Termcast::Server::Web::App';
+                Class::MOP::load_class($app_class);
 
-                # XXX weaken
-                return App::Termcast::Server::Web::App->new(
-                    tc_socket   => $service->param('tc_socket'),
-                    connections => $service->param('connections'),
-                    hippie      => $service->param('hippie'),
-                    tt          => $service->param('tt'),
-                );
+                return $app_class->new( %{$service->params} );
             },
             lifecycle    => 'Singleton',
             dependencies => ['hippie', 'tt', 'tc_socket', 'connections'],
