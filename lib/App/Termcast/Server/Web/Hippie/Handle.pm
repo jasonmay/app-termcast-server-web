@@ -60,7 +60,13 @@ sub send_to_browser {
     $self->vt->process($buf);
     my $updates = $self->vt->get_increment();
 
-    $self->handle->send_msg($updates);
+    # send 10 updates at a time
+    # .. seems to fix the mysterious lag
+    # that appears after a few hours
+    while ( my @update_batch = splice @$updates, 0, 10) {
+        $self->handle->send_msg(\@update_batch);
+    }
+
 }
 
 __PACKAGE__->meta->make_immutable;
