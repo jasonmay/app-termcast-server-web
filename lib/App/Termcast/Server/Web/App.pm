@@ -58,10 +58,13 @@ sub call {
                 my ($env) = @_;
                 #use Data::Dumper::Concise; warn Dumper($env);
 
+                my $req = Plack::Request->new($env);
+
                 my $dispatch = App::Termcast::Server::Web::Dispatcher->dispatch(
                     $env->{PATH_INFO},
                     tt          => $self->tt,
                     connections => $self->connections,
+                    params      => {%{$req->parameters}}, #unbless
                 );
 
                 my $body;
@@ -70,6 +73,7 @@ sub call {
                     $body = $match->run(
                         tt          => $self->tt,
                         connections => $self->connections,
+                        params      => {%{$req->parameters}}, #unbless
                     );
                 }
                 else {

@@ -28,7 +28,13 @@ $(function() {
     $('#notice').text('Connecting.');
 //    $('#terminal').hide();
 
-    var canvas = document.getElementById('terminal_canvas');
+    var canvas =
+    [% IF params.old %]
+        undefined; // forced degradation!
+    [% ELSE %]
+        document.getElementById('terminal_canvas');
+    [% END %]
+
     var connect_func, message_func, error_func;
     var screen = {};
 
@@ -82,10 +88,10 @@ $(function() {
 <hr />
 <div id="terminal">
 <div id="caption">Viewing: [% stream.username %] ([% stream.cols %]x[% stream.lines %])</div>
-<canvas id="terminal_canvas">
+[% UNLESS params.old %] <canvas id="terminal_canvas"> [% END %]
 <!--<canvas id="terminal_canvas">-->
 <div id="container"> </div>
-</canvas>
+[% UNLESS params.old %]</canvas>[% END %]
 <!--</canvas>-->
 </div>
 <div id="notice"> </div>

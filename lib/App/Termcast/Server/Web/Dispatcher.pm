@@ -22,13 +22,14 @@ on ['tv', qr/[\w-]+/] => sub {
     my %args        = @_;
     my $tt          = delete $args{tt};
     my $connections = delete $args{connections};
+    my $params      = delete $args{params};
     my $stream_id   = $2;
 
     my $conn_fd = $connections->stream_to_fd->{$stream_id};
     my $stream  = $connections->streams->{$conn_fd};
 
     my $data;
-    $tt->process('viewer.tt', { stream => $stream }, \$data);
+    $tt->process('viewer.tt', { stream => $stream, params => $params }, \$data);
 
     return $data;
 };
