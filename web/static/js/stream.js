@@ -246,6 +246,8 @@ function c_update_cell_value(col, line, context, diff, screen) {
     );
 
     c_update_cell_bg(col, line, context, diff, screen);
+
+    context.fillStyle = color_map[7];
     c_update_cell_fg(col, line, context, diff, screen);
 
     if (diff['v'] == ' ') { return; }
@@ -269,28 +271,39 @@ function c_update_cell_bg(col, line, context, diff, screen) {
 }
 
 function c_update_cell_fg(col, line, context, diff, screen) {
+    return; // XXX
     var color;
 
     var map;
     if (diff.bo) {
         map = bold_color_map;
     }
+    else if (typeof(diff.bo) === 'undefined') {
+        if (get_screen_value(screen, col, line, 'bo')) {
+            // boldness was preserved
+            map = bold_color_map;
+        }
+        else {
+            map = color_map;
+        }
+    }
     else {
         map = color_map;
     }
 
-    if (!diff['fg']) {
+    if (!diff.fg) {
         fg = get_screen_value(screen, col, line, 'fg');
         if (typeof(fg) === 'undefined') {
-            color = color_map[7];
+            color = map[7];
         }
         else {
             color = map[fg];
         }
     }
     else {
-        set_screen_value(screen, col, line, 'fg', diff['fg']);
-        color = map[diff['fg']];
+        set_screen_value(screen, col, line, 'fg', diff.fg);
+        set_screen_value(screen, col, line, 'bo', diff.bo);
+        color = map[diff.fg];
     }
 
 
