@@ -179,18 +179,18 @@ function set_screen_value(screen, col, line, key, value) {
     if (!col) col = '0'; if (!line) line = '0';
 
     if (typeof(screen)            === 'undefined') screen            = {};
-    if (typeof(screen[col])       === 'undefined') { screen[col]       = {}; }
-    if (typeof(screen[col][line]) === 'undefined') screen[col][line] = {};
+    if (typeof(screen[line])       === 'undefined') { screen[line]       = {}; }
+    if (typeof(screen[line][col]) === 'undefined') screen[line][col] = {};
 
-    screen[col][line][key] = value;
+    screen[line][col][key] = value;
 }
 
 function get_screen_value(screen, col, line, key) {
     if (typeof(screen)            === 'undefined') return undefined;
-    if (typeof(screen[col])       === 'undefined') return undefined;
-    if (typeof(screen[col][line]) === 'undefined') return undefined;
+    if (typeof(screen[line])       === 'undefined') return undefined;
+    if (typeof(screen[line][col]) === 'undefined') return undefined;
 
-    return screen[col][line][key];
+    return screen[line][col][key];
 }
 
 function init_canvas(canvas, cols, lines) {
@@ -231,7 +231,6 @@ function update_canvas(data, context, screen, cols, lines) {
 }
 
 function c_update_cell_value(col, line, context, diff, screen) {
-    if (diff['v'] == '' || typeof(diff['v']) === 'undefined') { return; }
 
     var cell_width = context.measureText('M').width;
 
@@ -250,7 +249,14 @@ function c_update_cell_value(col, line, context, diff, screen) {
     context.fillStyle = color_map[7];
     c_update_cell_fg(col, line, context, diff, screen);
 
-    if (diff['v'] == ' ') { return; }
+    if (diff['v'] == '' || typeof(diff['v']) === 'undefined') {
+        if (get_screen_value(screen, col, line, 'v')) {
+            diff['v'] = get_screen_value(screen, col, line, 'v');
+        }
+    }
+    else {
+        set_screen_value(screen, col, line, 'v', diff['v']);
+    }
     context.fillText(diff['v'], col * cell_width, line * mod_height);
 }
 
@@ -271,7 +277,7 @@ function c_update_cell_bg(col, line, context, diff, screen) {
 }
 
 function c_update_cell_fg(col, line, context, diff, screen) {
-    return; // XXX
+    //return; // XXX
     var color;
 
     var map;
