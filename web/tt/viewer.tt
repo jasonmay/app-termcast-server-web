@@ -70,10 +70,24 @@ $(function() {
         });
     };
 
-    var hippie = new Hippie(
-        document.location.host, '[% stream.id %]',
-        connect_func, error_func, message_func
-    );
+    var hpipe = new Hippie.Pipe();
+    var status = $('#notice');
+
+    hpipe.args = '[% stream.id %]';
+
+    jQuery(hpipe)
+    .bind('connected', connect_func)
+    .bind('disconnected', error_func)
+    .bind('reconnecting', function(e, data) {
+        status.text('Whoops, stream went down! Reconnecting...');
+        $('#terminal').hide();
+    })
+    .bind('message.data', function(e, d) {
+        //console.log(d);
+        message_func(d.data);
+    });
+
+    hpipe.init();
 });
 
 // -->
