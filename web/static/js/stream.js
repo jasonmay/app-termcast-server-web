@@ -199,7 +199,7 @@ function init_canvas(canvas, cols, lines) {
     // get the width of the letter M in our font
     set_font(context);
     var cell_width = context.measureText('M').width;
-    canvas.width  = Math.floor(cell_width * cols * spacing);
+    canvas.width  = Math.floor(cell_width * cols);
     canvas.height = Math.floor(cell_height * lines * spacing);
 
     var border_width = 10;
