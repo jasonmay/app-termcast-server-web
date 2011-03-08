@@ -168,7 +168,7 @@ function termcast_cb(data, cols, lines) {
     }
 }
 
-var cell_height = 10;
+var cell_height = 16;
 var spacing     = 1.35;
 function set_font(context) {
     context.font = Math.floor(cell_height / spacing) + "pt Monaco,'Bitstream Vera Sans Mono',monospace";
