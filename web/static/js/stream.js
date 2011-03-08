@@ -309,7 +309,6 @@ function c_update_cell_fg(col, line, context, diff, screen) {
     }
     else {
         set_screen_value(screen, col, line, 'fg', diff.fg);
-        set_screen_value(screen, col, line, 'bo', diff.bo);
         color = map[diff.fg];
     }
 
