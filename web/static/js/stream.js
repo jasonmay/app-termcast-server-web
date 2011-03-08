@@ -51,11 +51,11 @@ function add_newline(tc) {
 }
 
 function update_cell_value(cell, diff) {
-    if (diff['v']) {
-        var content = diff['v'];
+    if (diff.v) {
+        var content = diff.v;
         if (content == ' ') {
             content = '&nbsp;';
-            diff['bo'] = 0;
+            diff.bo = 0;
         }
         cell.html(content);
     }
@@ -83,14 +83,14 @@ function color_cell(cell, diff) {
 
     var color;
 
-    if (diff['bo']) {
-        color = bold_color_map[diff['fg']];
+    if (diff.bo) {
+        color = bold_color_map[diff.fg];
     }
     else {
-        color = color_map[diff['fg']];
+        color = color_map[diff.fg];
     }
 
-    bg_color = color_map[diff['bg']];
+    bg_color = color_map[diff.bg];
 
     cell.css({
         color: color,
@@ -154,13 +154,13 @@ function termcast_cb(data, cols, lines) {
 
                 var cell = $( _selector(row, col) );
 
-                if (diff['clear'])
+                if (diff.clear)
                     clear_cells(cols, lines);
 
-                if (diff['v'])
+                if (diff.v)
                     update_cell_value(cell, diff);
 
-                if (diff['fg'] || diff['bg'])
+                if (diff.fg || diff.bg)
                     color_cell(cell, diff);
 
             }
@@ -220,7 +220,7 @@ function update_canvas(data, context, screen, cols, lines) {
                 context.fillStyle = bold_color_map[0];
                 c_update_cell_value(col, line, context, diff, screen);
 
-                if (diff['clear']) {
+                if (diff.clear) {
                     // hack to clear canvas
                     context.canvas.width = context.canvas.width;
                     set_font(context);
@@ -262,14 +262,14 @@ function c_update_cell_value(col, line, context, diff, screen) {
 
     preserve_or_assign('v', col, line, diff, screen);
 
-    context.fillText(diff['v'], col * cell_width, line * mod_height);
+    context.fillText(diff.v, col * cell_width, line * mod_height);
 }
 
 function c_update_cell_bg(col, line, context, diff, screen) {
 
     preserve_or_assign('bg', col, line, diff, screen);
 
-    var bg_color   = color_map[diff['bg']];
+    var bg_color   = color_map[diff.bg];
     var cell_width = context.measureText('M').width;
 
     var mod_height = Math.floor(cell_height * spacing);
