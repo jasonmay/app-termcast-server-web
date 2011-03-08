@@ -266,12 +266,14 @@ function c_update_cell_value(col, line, context, diff, screen) {
 }
 
 function c_update_cell_bg(col, line, context, diff, screen) {
-    return; // let's not use bg for now
-    if (typeof(diff['bg']) === undefined) { return; }
+
+    preserve_or_assign('bg', col, line, diff, screen);
+
     var bg_color   = color_map[diff['bg']];
     var cell_width = context.measureText('M').width;
 
     var mod_height = Math.floor(cell_height * spacing);
+
 
     context.fillStyle = bg_color;
     context.fillRect(
