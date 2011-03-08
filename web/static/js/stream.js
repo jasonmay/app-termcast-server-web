@@ -230,6 +230,17 @@ function update_canvas(data, context, screen, cols, lines) {
     }
 }
 
+function preserve_or_assign(key, col, line, diff, screen) {
+    if (typeof(diff[key]) === 'undefined') {
+        if (get_screen_value(screen, col, line, key)) {
+            diff[key] = get_screen_value(screen, col, line, key);
+        }
+    }
+    else {
+        set_screen_value(screen, col, line, key, diff[key]);
+    }
+}
+
 function c_update_cell_value(col, line, context, diff, screen) {
 
     var cell_width = context.measureText('M').width;
@@ -252,17 +263,6 @@ function c_update_cell_value(col, line, context, diff, screen) {
     preserve_or_assign('v', col, line, diff, screen);
 
     context.fillText(diff['v'], col * cell_width, line * mod_height);
-}
-
-function preserve_or_assign(key, col, line, diff, screen) {
-    if (typeof(diff[key]) === 'undefined') {
-        if (get_screen_value(screen, col, line, key)) {
-            diff[key] = get_screen_value(screen, col, line, key);
-        }
-    }
-    else {
-        set_screen_value(screen, col, line, key, diff[key]);
-    }
 }
 
 function c_update_cell_bg(col, line, context, diff, screen) {
