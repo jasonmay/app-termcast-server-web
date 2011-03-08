@@ -26,7 +26,7 @@ function setup_terminal() {
 $(function() {
 
     $('#notice').text('Connecting.');
-//    $('#terminal').hide();
+    $('#terminal').hide();
 
     var canvas =
     [% IF params.old %]
@@ -38,9 +38,10 @@ $(function() {
     var connect_func, message_func, error_func;
     var screen = {};
 
-    if (canvas && canvas.getContext) {
+    if (canvas && canvas.getContext && canvas.getContext('2d')) {
         connect_func = function() {
             $('#notice').hide();
+            $('#terminal').show(); // don't fade - makes canvas sad
             console.log(canvas);
             init_canvas(canvas, [% stream.cols %], [% stream.lines %]);
         };
