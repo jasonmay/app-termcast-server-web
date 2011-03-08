@@ -7,6 +7,7 @@ build_requires 'Test::More';
 
 requires 'Plack';
 requires 'Web::Hippie';
+requires 'AnyEvent';
 requires 'AnyMQ';
 requires 'Moose';
 requires 'Path::Dispatcher';

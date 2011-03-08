@@ -64,15 +64,6 @@ sub final_app {
     return $self->resolve(service => 'plack_app')->to_app();
 }
 
-sub run {
-    my $self = shift;
-
-    my $app = $self->final_app;
-
-    require Plack::Loader;
-    Plack::Loader->auto(port => $self->port)->run($app);
-}
-
 __PACKAGE__->meta->make_immutable;
 no Moose;
 
