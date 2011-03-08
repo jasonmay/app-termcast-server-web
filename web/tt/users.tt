@@ -9,7 +9,7 @@
 <hr />
 [% IF connections.streams.keys.size %]
 <p>The following sessions are in progress:</p>
-<ul>
+<ul style="font-size: 150%">
 [% FOREACH fd = connections.streams.keys %]
 <li><a href="tv/[% connections.streams.$fd.id %]">[% connections.streams.$fd.username %]</a></li>
 [% END %]
@@ -17,5 +17,18 @@
 [% ELSE %]
 Nobody is streaming at this time.
 [% END %]
+
+<hr />
+
+<p>
+    To stream, follow these instructions:
+
+    <pre style="background-color: white; border: solid 1px black; width: 600px">
+    git clone git://github.com/jasonmay/app-termcast.git
+    cd app-termcast
+    perl -Ilib bin/termcast --host jarsonmar.org
+    </pre>
+    This is just a fork of doy's App::Termcast but my fork is the only client that will work on my server (for custom term geometry). Sorry!
+</p>
 </body>
 </html>
