@@ -275,7 +275,7 @@ function c_update_cell_bg(col, line, context, diff, screen) {
     var mod_height = Math.floor(cell_height * spacing);
 
 
-    context.fillStyle = bg_color;
+    if (bg_color) context.fillStyle = bg_color;
     context.fillRect(
         col * cell_width,
         line * mod_height,
@@ -313,5 +313,5 @@ function c_update_cell_fg(col, line, context, diff, screen) {
     }
 
 
-    context.fillStyle = color;
+    if (color) context.fillStyle = color;
 }
