@@ -8,7 +8,8 @@
 <script src="/jquery.ev.js"></script>
 <script src="/DUI.js"></script>
 <script src="/Stream.js"></script>
-<script src="/hippie.js"></script>
+<script src="../static/myhippie.js"></script>
+<script src="/hippie.pipe.js"></script>
 <script src="/json2.js"></script>
 <script type="text/javascript">
 // <!--
