@@ -7,6 +7,8 @@ build_requires 'Test::More';
 
 requires 'Plack';
 requires 'Web::Hippie';
+requires 'Twiggy';
+requires 'EV'; # needs to be installed to work around a current TWiggy bug (3/7)
 requires 'AnyEvent';
 requires 'AnyMQ';
 requires 'Moose';
