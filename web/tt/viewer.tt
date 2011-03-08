@@ -13,6 +13,11 @@
 <script type="text/javascript">
 // <!--
 
+function no_ws() {
+    $('#notice').text('This browser does not support WebSockets. I could degrade to MXHR but I have no idea how to do that right now.');
+    $('#terminal').hide();
+}
+
 function setup_terminal() {
     var width = $('#pos-1-1').width() * [% stream.cols %];
 
@@ -37,6 +42,12 @@ $(function() {
 
     var connect_func, message_func, error_func;
     var screen = {};
+
+    if (!("WebSocket" in window)) {
+        no_ws();
+        return;
+    }
+
 
     if (canvas && canvas.getContext && canvas.getContext('2d')) {
         connect_func = function() {
