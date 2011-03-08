@@ -217,7 +217,7 @@ function update_canvas(data, context, screen, cols, lines) {
                 diff = canonicalize_data(change[2]);
 
             if (diff) {
-                context.fillStyle = color_map[7];
+                context.fillStyle = bold_color_map[0];
                 c_update_cell_value(col, line, context, diff, screen);
 
                 if (diff['clear']) {
@@ -249,15 +249,20 @@ function c_update_cell_value(col, line, context, diff, screen) {
     context.fillStyle = color_map[7];
     c_update_cell_fg(col, line, context, diff, screen);
 
-    if (diff['v'] == '' || typeof(diff['v']) === 'undefined') {
-        if (get_screen_value(screen, col, line, 'v')) {
-            diff['v'] = get_screen_value(screen, col, line, 'v');
+    preserve_or_assign('v', col, line, diff, screen);
+
+    context.fillText(diff['v'], col * cell_width, line * mod_height);
+}
+
+function preserve_or_assign(key, col, line, diff, screen) {
+    if (typeof(diff[key]) === 'undefined') {
+        if (get_screen_value(screen, col, line, key)) {
+            diff[key] = get_screen_value(screen, col, line, key);
         }
     }
     else {
-        set_screen_value(screen, col, line, 'v', diff['v']);
+        set_screen_value(screen, col, line, key, diff[key]);
     }
-    context.fillText(diff['v'], col * cell_width, line * mod_height);
 }
 
 function c_update_cell_bg(col, line, context, diff, screen) {
@@ -281,23 +286,17 @@ function c_update_cell_fg(col, line, context, diff, screen) {
     var color;
 
     var map;
+
+    preserve_or_assign('bo', col, line, diff, screen);
+
     if (diff.bo) {
         map = bold_color_map;
-    }
-    else if (typeof(diff.bo) === 'undefined') {
-        if (get_screen_value(screen, col, line, 'bo')) {
-            // boldness was preserved
-            map = bold_color_map;
-        }
-        else {
-            map = color_map;
-        }
     }
     else {
         map = color_map;
     }
 
-    if (!diff.fg) {
+    if (typeof(diff.fg) === 'undefined') {
         fg = get_screen_value(screen, col, line, 'fg');
         if (typeof(fg) === 'undefined') {
             color = map[7];
