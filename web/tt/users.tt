@@ -28,7 +28,7 @@ Nobody is streaming at this time.
     cd app-termcast
     perl -Ilib bin/termcast --host jarsonmar.org
     </pre>
-    This is just a fork of doy's App::Termcast but my fork is the only client that will work on my server (for custom term geometry). Sorry!
+    This is just a fork of doy's App::Termcast but my fork is the only client that will work on my server (for custom term geometry). Not merging until I am happy with my implementation. Sorry!
 </p>
 </body>
 </html>
