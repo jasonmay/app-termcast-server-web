@@ -45,6 +45,7 @@ around BUILDARGS => sub {
         );
     }
 
+    warn;
     $self->$orig(%args);
 };
 
@@ -59,12 +60,6 @@ sub _build_vt {
 sub make_vt {
     my $self = shift;
     my %args = @_;
-
-    $self->cols($args{cols})   if $args{cols};
-    $self->lines($args{lines}) if $args{lines};
-
-    $args{cols}  ||= $self->cols;
-    $args{lines} ||= $self->lines;
 
     my $vt = Term::VT102::Incremental->new(%args);
     #$vt->vt->option_set('LINEWRAP', 1);
