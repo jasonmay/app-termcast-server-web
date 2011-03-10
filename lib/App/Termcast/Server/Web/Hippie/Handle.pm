@@ -20,12 +20,22 @@ has vt => (
     clearer => 'clear_vt',
 );
 
+# need to keep track for when we lose it in the VT clearing
+has ['lines', 'cols'] => (
+    is  => 'rw',
+    isa => 'Int',
+);
+
 around BUILDARGS => sub {
     my $orig = shift;
     my $self = shift;
     my %args = @_;
 
     if ($args{cols} and $args{lines} and not $args{vt}) {
+
+        $self->cols($args{cols}  || 80);
+        $self->lines($args{rows} || 24);
+
         $args{vt} = $self->make_vt(
             rows => delete $args{lines},
             cols => delete $args{cols},
@@ -35,11 +45,17 @@ around BUILDARGS => sub {
     $self->$orig(%args);
 };
 
-sub _build_vt { shift->make_vt; }
+sub _build_vt { shift->make_vt(); }
 
 sub make_vt {
     my $self = shift;
     my %args = @_;
+
+    $self->cols($args{cols})   if $args{cols};
+    $self->lines($args{lines}) if $args{lines};
+
+    $args{cols}  ||= $self->cols;
+    $args{lines} ||= $self->lines;
 
     my $vt = Term::VT102::Incremental->new(%args);
     #$vt->vt->option_set('LINEWRAP', 1);
