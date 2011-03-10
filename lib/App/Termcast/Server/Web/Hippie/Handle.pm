@@ -45,6 +45,7 @@ around BUILDARGS => sub {
         );
     }
 
+    warn;
     $self->$orig(%args);
 };
 
