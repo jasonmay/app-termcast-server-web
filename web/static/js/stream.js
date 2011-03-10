@@ -204,6 +204,7 @@ function init_canvas(canvas, cols, lines) {
 
     var border_width = 10;
     $('#caption').width(canvas.width + border_width * 2);
+    $('#caption').text('Viewing: ' + canvas.streamer_username + ' (' + cols + 'x' + lines + ')');
     // ugh, have to set the font again after adjusting the canvas geometry
     set_font(context);
 }
@@ -224,6 +225,14 @@ function update_canvas(data, context, screen, cols, lines) {
                     // hack to clear canvas
                     context.canvas.width = context.canvas.width;
                     set_font(context);
+                }
+
+                if (diff.resize) {
+                    cols  = diff.resize[0];
+                    lines = diff.resize[1];
+
+                    // set up canvas again (with new geometry)
+                    init_canvas(context.canvas, cols, lines);
                 }
             }
         }

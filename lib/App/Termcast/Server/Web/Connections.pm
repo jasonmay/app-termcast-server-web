@@ -6,37 +6,38 @@ use AnyEvent::Socket;
 use App::Termcast::Server::Web::Stream;
 
 has streams => (
-    is => 'ro',
-    isa => 'HashRef[App::Termcast::Server::Web::Stream]',
-    traits => ['Hash'],
+    is      => 'ro',
+    isa     => 'HashRef[App::Termcast::Server::Web::Stream]',
+    traits  => ['Hash'],
     handles => {
         set_stream    => 'set',
         delete_stream => 'delete',
     },
-    clearer => 'clear_streams',
+    clearer  => 'clear_streams',
+    weak_ref => 1,
 );
 
 # websocket handles from Web::Hippie
 has hippie => (
-    is => 'ro',
-    isa => 'App::Termcast::Server::Web::Hippie',
+    is       => 'ro',
+    isa      => 'App::Termcast::Server::Web::Hippie',
     required => 1,
 );
 
 has tc_socket => (
-    is => 'ro',
-    isa => 'Str',
+    is       => 'ro',
+    isa      => 'Str',
     required => 1,
 );
 
 has tc_handle => (
-    is => 'rw',
+    is  => 'rw',
     isa => 'AnyEvent::Handle',
 );
 
 has stream_to_fd => (
-    is => 'ro',
-    isa => 'HashRef',
+    is      => 'ro',
+    isa     => 'HashRef',
     default => sub { +{} },
 );
 
@@ -73,9 +74,15 @@ sub handle_server_notice {
         my $conn_data = $data->{connection};
         $self->make_stream(%$conn_data);
     }
+    if ($data->{notice} eq 'metadata') {
+        my $metadata  = $data->{metadata};
+        my $stream_id = $data->{session_id};
+
+        $self->handle_metadata($stream_id, $metadata);
+    }
     elsif ($data->{notice} eq 'disconnect') {
-        my $stream = $data->{session_id};
-        my $fd     = $self->stream_to_fd->{$stream};
+        my $stream_id = $data->{session_id};
+        my $fd        = $self->stream_to_fd->{$stream_id};
 
         $self->delete_stream($fd);
     }
@@ -98,6 +105,27 @@ sub handle_server_response {
     }
 }
 
+sub handle_metadata {
+    my $self = shift;
+    my ($stream_id, $metadata) = @_;
+
+    my $stream = $self->get_stream($stream_id);
+
+    if ($metadata->{geometry}) {
+        my ($cols, $lines) = @{$metadata->{geometry}};
+        $stream->cols($cols);
+        $stream->lines($lines);
+
+        my @hippie_handles =
+            grep { $_->stream eq $stream_id }
+            $self->hippie->hippie_handles->members;
+
+        foreach my $hh (@hippie_handles) {
+            $hh->send_resize_to_browser($cols, $lines);
+        }
+    }
+}
+
 sub get_stream_from_handle {
     my $self   = shift;
     my $handle = shift;
@@ -115,10 +143,6 @@ sub make_stream {
         username    => $args{user},
         connections => $self,
     );
-
-    if ($args{geometry}) {
-        @params{'cols', 'lines'} = @{$args{geometry}};
-    }
 
     #use Data::Dumper::Concise; warn Dumper(\%params);
     my $stream = App::Termcast::Server::Web::Stream->new(%params);

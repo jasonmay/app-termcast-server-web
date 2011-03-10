@@ -45,7 +45,6 @@ around BUILDARGS => sub {
         );
     }
 
-    warn;
     $self->$orig(%args);
 };
 
@@ -67,10 +66,27 @@ sub make_vt {
     return $vt;
 }
 
+sub send {
+    my $self = shift;
+    my $data = shift;
+    $self->handle->send_msg({type => 'data', data => $data});
+}
+
 sub send_clear_to_browser {
     my $self = shift;
 
-    $self->handle->send_msg( [[0, 0, {clear => 1}]] );
+    $self->send([[0, 0, {clear => 1}]]);
+}
+
+sub send_resize_to_browser {
+    my $self = shift;
+    my ($cols, $lines) = @_;
+
+    $self->lines($lines);
+    $self->cols($cols);
+
+    $self->clear_vt;
+    $self->send( [[0, 0, {resize => [$cols, $lines]}]] );
 }
 
 sub send_to_browser {
@@ -84,7 +100,7 @@ sub send_to_browser {
     # .. seems to fix the mysterious lag
     # that appears after a few hours
     while ( my @update_batch = splice @$updates, 0, 10) {
-        $self->handle->send_msg({type => 'data', data => \@update_batch});
+        $self->send( \@update_batch );
     }
 
 }

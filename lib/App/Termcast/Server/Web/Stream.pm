@@ -37,13 +37,13 @@ has buffer => (
 );
 
 has cols => (
-    is       => 'ro',
+    is       => 'rw',
     isa      => 'Num',
     default  => 80,
 );
 
 has lines => (
-    is       => 'ro',
+    is       => 'rw',
     isa      => 'Num',
     default  => 24,
 );
@@ -61,11 +61,13 @@ sub connect {
                 #warn "$h->{rbuf}\n";
 
                 my @hh = $self->connections->hippie->hippie_handles->members;
-                if ($h->{rbuf} =~ s/.\e\[2J/\e\[H\e\[2J/s) {
+                my $cleared = 0;;
+                if ($h->{rbuf} =~ s/.\e\[2J//s) {
                     $self->buffer('');
+                    $cleared = 1;
                 }
 
-                my $buf = '' . $h->{rbuf};
+                my $buf = ($cleared ? "\e[H\e[2J" : '') . $h->{rbuf};
                 foreach my $hippie_handle (@hh) {
                     next unless $hippie_handle->stream eq $self->id;
                     if ($buf =~ /\e\[2J/s) {

@@ -43,6 +43,7 @@ $(function() {
         connect_func = function() {
             $('#notice').hide();
             $('#terminal').show(); // don't fade - makes canvas sad
+            canvas.streamer_username = '[% stream.username %]';
             init_canvas(canvas, [% stream.cols %], [% stream.lines %]);
         };
 
