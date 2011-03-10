@@ -45,7 +45,6 @@ around BUILDARGS => sub {
         );
     }
 
-    warn;
     $self->$orig(%args);
 };
 
@@ -101,7 +100,7 @@ sub send_to_browser {
     # .. seems to fix the mysterious lag
     # that appears after a few hours
     while ( my @update_batch = splice @$updates, 0, 10) {
-        $self->handle->send_msg({type => 'data', data => \@update_batch});
+        $self->send( \@update_batch );
     }
 
 }
