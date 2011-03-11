@@ -5,15 +5,41 @@ use Path::Dispatcher::Declarative -base, -default => {
     token_delimiter => '/',
 };
 
+use DateTime::Format::Human::Duration;
+
 on qr{^/$} => sub {
     my %args = @_;
     my $tt = delete $args{tt};;
     my $connections = delete $args{connections};
 
-    #use Data::Dumper::Concise; die Dumper($connections);
+    my @hh = $connections->hippie->hippie_handles->members;
+    my %stream_data;
+    foreach my $hh (@hh) {
+        # TODO skip yourself
+        $stream_data{$hh->stream}{viewers}++;
+    }
+
+    my @streams = values %{$connections->streams || {}};
+    my $dur = DateTime::Format::Human::Duration->new;
+
+    foreach my $stream (@streams) {
+        $stream_data{$stream->id}{viewers} ||= 0;
+        $stream_data{$stream->id}{idle} = $dur->format_duration_between(
+            $connections->get_stream($stream->id)->last_active,
+            DateTime->now,
+        );
+
+        $stream_data{$stream->id}{object} = $stream;
+    }
 
     my $data;
-    $tt->process('users.tt', {connections => $connections}, \$data);
+    $tt->process(
+        'users.tt', {
+            connections => $connections,
+            stream_data => \%stream_data,
+        },
+        \$data
+    );
 
     return $data;
 };

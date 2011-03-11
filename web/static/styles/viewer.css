@@ -77,3 +77,12 @@ hr {
     border: dashed 1px #ca8;
 }
 
+.viewers {
+    font-weight: bold;
+    color: #070;
+}
+
+.idle {
+    font-weight: bold;
+    color: #447;
+}

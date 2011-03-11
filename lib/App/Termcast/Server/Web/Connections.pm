@@ -13,6 +13,7 @@ has streams => (
         set_stream    => 'set',
         delete_stream => 'delete',
     },
+    default  => sub { +{} },
     clearer  => 'clear_streams',
     weak_ref => 1,
 );
@@ -141,6 +142,7 @@ sub make_stream {
     my %params = (
         id          => $args{session_id},
         username    => $args{user},
+        last_active => DateTime->from_epoch(epoch => $args{last_active}),
         connections => $self,
     );
 

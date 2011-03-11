@@ -4,6 +4,7 @@ use warnings;
 use lib 'lib';
 use App::Termcast::Server::Web;
 
+use Try::Tiny;
 
 my $socket;
 for (0 .. @ARGV-1) {
@@ -13,4 +14,6 @@ for (0 .. @ARGV-1) {
     }
 }
 
-App::Termcast::Server::Web->new(tc_socket => $socket)->final_app;
+my $app = App::Termcast::Server::Web->new(tc_socket => $socket)->final_app;
+
+sub { my @args = @_; try { $app->(@args) } catch { warn $_ } };

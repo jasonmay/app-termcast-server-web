@@ -20,5 +20,7 @@ requires 'AnyEvent';
 requires 'Template';
 requires 'Term::VT102::Incremental';
 
+requires 'DateTime';
+
 auto_install();
 WriteAll();

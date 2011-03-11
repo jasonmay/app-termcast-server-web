@@ -1,6 +1,8 @@
 package App::Termcast::Server::Web::Stream;
 use Moose;
 
+use DateTime;
+
 use AnyEvent::Socket;
 
 use Term::VT102::Incremental;
@@ -48,6 +50,12 @@ has lines => (
     default  => 24,
 );
 
+has last_active => (
+    is      => 'rw',
+    isa     => 'DateTime',
+    default => sub { DateTime->now() },
+);
+
 sub connect {
     my $self = shift;
     my $socket = shift;
@@ -78,6 +86,8 @@ sub connect {
                     #warn length($buf);
                     $hippie_handle->send_to_browser($buf);
                 }
+
+                $self->mark_active();
                 $self->{buffer} .= $h->{rbuf};
                 $h->{rbuf} = '';
 
@@ -103,6 +113,8 @@ sub connect {
         $self->connections->stream_to_fd->{$self->id} = $fd;
     };
 }
+
+sub mark_active { shift->last_active(DateTime->now) }
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

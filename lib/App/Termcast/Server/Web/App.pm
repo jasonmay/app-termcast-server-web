@@ -12,6 +12,8 @@ use AnyMQ;
 use App::Termcast::Server::Web::Dispatcher;
 use App::Termcast::Server::Web::Hippie::Handle;
 
+use Try::Tiny;
+
 sub call {
     my ($self, $env) = @_;
 
@@ -87,7 +89,7 @@ sub call {
             Plack::App::Cascade->new(
                 apps => [
                     Web::Hippie::App::JSFiles->new->to_app(),
-                    $dispatch_app,
+                    sub { my @args = @_; try { $dispatch_app->(@args) } catch { warn $_ } },
                 ]
             );
         };
