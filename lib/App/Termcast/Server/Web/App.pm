@@ -45,7 +45,6 @@ sub call {
                     weaken(my $weak_hippie = $hh);
                     $h->h->on_error(
                         sub {
-                            warn $self->hippie->hippie_handles->has($weak_hippie);
                             $self->hippie->hippie_handles->remove($weak_hippie);
                         }
                     );
