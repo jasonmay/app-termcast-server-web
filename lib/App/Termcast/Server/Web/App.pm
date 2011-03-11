@@ -12,6 +12,8 @@ use AnyMQ;
 use App::Termcast::Server::Web::Dispatcher;
 use App::Termcast::Server::Web::Hippie::Handle;
 
+use Scalar::Util qw(weaken);
+
 use Try::Tiny;
 
 sub call {
@@ -31,11 +33,21 @@ sub call {
 
                     my $stream = $self->connections->get_stream($stream_id);
 
+
+
                     my $hh = App::Termcast::Server::Web::Hippie::Handle->new(
                         stream => $stream_id,
                         handle => $h,
                         lines => $stream->lines,
                         cols  => $stream->cols,
+                    );
+
+                    weaken(my $weak_hippie = $hh);
+                    $h->h->on_error(
+                        sub {
+                            warn $self->hippie->hippie_handles->has($weak_hippie);
+                            $self->hippie->hippie_handles->remove($weak_hippie);
+                        }
                     );
 
                     $self->hippie->hippie_handles->insert($hh);
