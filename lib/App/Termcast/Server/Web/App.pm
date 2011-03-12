@@ -118,7 +118,7 @@ sub web_response {
     return Plack::App::Cascade->new(
         apps => [
             Web::Hippie::App::JSFiles->new->to_app(),
-            sub { my @args = @_; try { $dispatch_app->(@args) } catch { warn $_ } },
+            $dispatch_app,
         ]
     );
 }
