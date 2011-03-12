@@ -14,8 +14,6 @@ use App::Termcast::Server::Web::Hippie::Handle;
 
 use Scalar::Util qw(weaken);
 
-use Try::Tiny;
-
 sub call {
     my ($self, $env) = @_;
 
