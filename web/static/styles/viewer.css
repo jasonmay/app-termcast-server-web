@@ -4,38 +4,14 @@ body {
     background: url('/static/images/termcast_gradient.png');
     background-repeat: repeat-x;
     background-color: #ffe;
-}
-
-a:link {
-    color: #006;
-    text-decoration: none;
-}
-
-a:visited {
-    color: #00b;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #00b;
-    text-decoration: underline;
-}
-
-.container h1 {
-    background-color: #eef;
-    border: solid 4px #55b;
-    -webkit-border-radius: 12px;
-    -moz-border-radius: 12px;
-    border-radius: 12px;
-    padding: 4px 12px;
-    color: black;
-    /*width: 60%;*/
+    color: #644;
 }
 
 #caption {
     padding-left: 0;
     margin-left:  0;
     background-color: #aaa;
+    color: #333;
     font-weight: bold;
     text-align: center;
     padding-top: 3px;
@@ -66,23 +42,8 @@ a:hover {
     background-color: white;
 }
 
-span { color: #666; }
-
 ul.nav {
     margin: 0;
     padding: 0;
 }
 
-hr {
-    border: dashed 1px #ca8;
-}
-
-.viewers {
-    font-weight: bold;
-    color: #070;
-}
-
-.idle {
-    font-weight: bold;
-    color: #447;
-}

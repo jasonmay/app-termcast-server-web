@@ -1,12 +1,13 @@
 <html>
 <head>
 <title>Termcast</title>
-<link href="static/styles/viewer.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="static/styles/main.css" media="screen" rel="stylesheet" type="text/css" />
 <script src="static/js/jquery-1.4.1.js"></script>
 </head>
 <body>
 <img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
 <hr />
+<h2>Live Streams</h2>
 [% IF stream_data.keys.size %]
 <p>The following sessions are in progress:</p>
 <ul>
@@ -27,16 +28,37 @@ Nobody is streaming at this time.
 [% END %]
 
 <hr />
-
+<h2>About Termcast</h2>
 <p>
-    To stream, follow these instructions:
-
+To be honest, this isn't the <em>real</em> termcast.
+<a href="http://termcast.org">This</a> is. I am currently working on a
+<a href="https://github.com/jasonmay/app-termcast-server">standalone termcast server</a>
+that just opens a bunch of sockets, allowing anything to connect to it and retrieve
+streaming data. This web application is an example of that!
+</p>
+<h2>Streaming Instructions</h2>
+<p>
     <pre style="background-color: white; border: solid 1px black; width: 600px">
     git clone git://github.com/jasonmay/app-termcast.git
     cd app-termcast
     perl -Ilib bin/termcast --host jarsonmar.org
     </pre>
-    This is just a fork of doy's App::Termcast but my fork is the only client that will work on my server (for custom term geometry). Not merging until I am happy with my implementation. Sorry!
+
+    This is just a fork of doy's App::Termcast but my fork is the only client
+    that will work on my server (for custom term geometry). Not merging until
+    I am happy with my implementation. Sorry!
+</p>
+
+<h2>The Source Code</h2>
+
+<ul>
+<li><a href="https://github.com/jasonmay/app-termcast-server">Standalone termcast server</a></li>
+<li><a href="https://github.com/jasonmay/app-termcast-server-web">Web termcast component</a></li>
+</ul>
+
+<h2>See a problem?</h2>
+<p>
+    Report it <a href="https://github.com/jasonmay/app-termcast-server-web/issues">here</a>!
 </p>
 </body>
 </html>
