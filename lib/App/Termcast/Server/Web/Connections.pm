@@ -42,6 +42,16 @@ has stream_to_fd => (
     default => sub { +{} },
 );
 
+# sometimes we get stream notices before
+# a connection is even establish. in that
+# situation we store them in this attr
+# until we are ready
+has notice_buffer => (
+    is      => 'ro',
+    isa     => 'HashRef',
+    default => sub { +{} },
+);
+
 sub _read_event {
     my $self = shift;
     my $h = shift;
@@ -49,7 +59,7 @@ sub _read_event {
     $h->push_read(json => sub {
         my ($h, $data) = @_;
         if ($data->{notice}) {
-            $self->handle_server_notice($h, $data);
+            $self->handle_server_notice($data);
         }
         elsif ($data->{response}) {
             $self->handle_server_response($h, $data);
@@ -66,25 +76,43 @@ sub _ask_for_stream_list {
     );
 }
 
+sub check_if_unprepared {
+    my $self      = shift;
+    my $stream_id = shift;
+    my $data      = shift;
+
+    if (!$self->stream_to_fd->{$stream_id}) {
+        $self->notice_buffer->{$stream_id} ||= [];
+        push @{ $self->notice_buffer->{$stream_id} }, $data;
+        return 0;
+    }
+
+    return 1;
+}
+
 sub handle_server_notice {
     my $self = shift;
-    my $h    = shift;
     my $data = shift;
 
     if ($data->{notice} eq 'connect') {
         my $conn_data = $data->{connection};
+
         $self->make_stream(%$conn_data);
     }
     if ($data->{notice} eq 'metadata') {
         my $metadata  = $data->{metadata};
         my $stream_id = $data->{session_id};
 
+        $self->check_if_unprepared($stream_id, $data) or return;
+
         $self->handle_metadata($stream_id, $metadata);
     }
     elsif ($data->{notice} eq 'disconnect') {
         my $stream_id = $data->{session_id};
-        my $fd        = $self->stream_to_fd->{$stream_id};
 
+        $self->check_if_unprepared($stream_id, $data) or return;
+
+        my $fd        = $self->stream_to_fd->{$stream_id};
         $self->delete_stream($fd);
     }
 }
@@ -157,6 +185,7 @@ sub get_stream {
     my $stream_id = shift;
 
     my $fd = $self->stream_to_fd->{$stream_id};
+    return undef unless $fd;
     return $self->streams->{$fd};
 }
 

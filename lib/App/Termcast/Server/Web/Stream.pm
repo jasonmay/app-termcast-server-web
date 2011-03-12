@@ -69,7 +69,7 @@ sub connect {
                 #warn "$h->{rbuf}\n";
 
                 my @hh = $self->connections->hippie->hippie_handles->members;
-                my $cleared = 0;;
+                my $cleared = 0;
                 if ($h->{rbuf} =~ s/.\e\[2J//s) {
                     $self->buffer('');
                     $cleared = 1;
@@ -95,6 +95,16 @@ sub connect {
             on_error => sub {
                 my ($h, $fatal, $error) = @_;
                 if ($fatal) {
+
+                    my $stream = $self->connections->streams->{ fileno($h->fh) };
+
+                    my @hh = $self->connections->hippie->hippie_handles->members;
+
+                    foreach my $hh ( @hh ) {
+                        next unless $hh->stream eq $stream->id;
+                        $hh->send_disconnect_to_browser();
+                    }
+
                     $self->connections->delete_stream( fileno($h->fh) );
                     $h->destroy;
                 }
@@ -111,6 +121,12 @@ sub connect {
         );
 
         $self->connections->stream_to_fd->{$self->id} = $fd;
+
+        if (my $notices_ref = delete $self->connections->notice_buffer->{$self->id}) {
+            foreach my $notice_data (@$notices_ref) {
+                $self->connections->handle_server_notice($notice_data);
+            }
+        }
     };
 }
 

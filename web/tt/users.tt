@@ -11,6 +11,7 @@
 <p>The following sessions are in progress:</p>
 <ul>
 [% FOREACH stream_id = stream_data.keys %]
+[% NEXT UNLESS stream_data.$stream_id.object %]
 <li>
 
     <strong><a href="tv/[% stream_id %]">[% stream_data.$stream_id.object.username %]</a></strong>

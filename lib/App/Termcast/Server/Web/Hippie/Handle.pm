@@ -78,6 +78,12 @@ sub send_clear_to_browser {
     $self->send([[0, 0, {clear => 1}]]);
 }
 
+sub send_disconnect_to_browser {
+    my $self = shift;
+
+    $self->send([[0, 0, {disconnect => 1}]]);
+}
+
 sub send_resize_to_browser {
     my $self = shift;
     my ($cols, $lines) = @_;

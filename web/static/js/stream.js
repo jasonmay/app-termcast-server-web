@@ -221,6 +221,11 @@ function update_canvas(data, context, screen, cols, lines) {
                 context.fillStyle = bold_color_map[0];
                 c_update_cell_value(col, line, context, diff, screen);
 
+                if (diff.disconnect) {
+                    window.location =
+                        window.location.protocol + '//' + window.location.host;
+                }
+
                 if (diff.clear) {
                     // hack to clear canvas
                     context.canvas.width = context.canvas.width;
