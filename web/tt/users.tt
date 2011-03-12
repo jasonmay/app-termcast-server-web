@@ -18,8 +18,6 @@
 
     - idle <span class="idle">[% stream_data.$stream_id.idle %]</span>
 
-    - <span class="viewers">[% stream_data.$stream_id.viewers %]</span> viewers
-
 </li>
 
 [% END %]

@@ -14,16 +14,11 @@ on qr{^/$} => sub {
 
     my @hh = $connections->hippie->hippie_handles->members;
     my %stream_data;
-    foreach my $hh (@hh) {
-        # TODO skip yourself
-        $stream_data{$hh->stream}{viewers}++;
-    }
 
     my @streams = values %{$connections->streams || {}};
     my $dur = DateTime::Format::Human::Duration->new;
 
     foreach my $stream (@streams) {
-        $stream_data{$stream->id}{viewers} ||= 0;
         $stream_data{$stream->id}{idle} = $dur->format_duration_between(
             $connections->get_stream($stream->id)->last_active,
             DateTime->now,
