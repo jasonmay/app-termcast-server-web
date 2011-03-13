@@ -172,6 +172,8 @@ sub make_stream {
         username    => $args{user},
         last_active => DateTime->from_epoch(epoch => $args{last_active}),
         connections => $self,
+        cols        => $args{geometry}->[0],
+        lines       => $args{geometry}->[1],
     );
 
     #use Data::Dumper::Concise; warn Dumper(\%params);
