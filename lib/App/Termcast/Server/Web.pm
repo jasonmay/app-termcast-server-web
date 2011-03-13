@@ -4,15 +4,11 @@ use Bread::Board;
 
 use Template;
 
+use YAML;
+
 extends 'Bread::Board::Container';
 
 has '+name' => ( default => sub { (shift)->meta->name } );
-
-has tc_socket => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-);
 
 has port => (
     is      => 'ro',
@@ -29,6 +25,9 @@ has tt_root => (
 sub BUILD {
     my $self = shift;
     container $self => as {
+
+        service config    => YAML::LoadFile('etc/config.yml');
+
         service plack_app => (
             block         => sub {
                 my $service   = shift;
@@ -38,10 +37,13 @@ sub BUILD {
                 return $app_class->new( %{$service->params} );
             },
             lifecycle    => 'Singleton',
-            dependencies => ['hippie', 'tt', 'tc_socket', 'connections'],
+            dependencies => [
+                'hippie',
+                'tt',
+                'connections',
+                'config',
+            ],
         );
-
-        service tc_socket => $self->tc_socket;
 
         service hippie => (
             class     => 'App::Termcast::Server::Web::Hippie',
@@ -51,7 +53,7 @@ sub BUILD {
         service connections    => (
             class        => 'App::Termcast::Server::Web::Connections',
             lifecycle    => 'Singleton',
-            dependencies => ['hippie', 'tc_socket'],
+            dependencies => ['hippie', 'config'],
         );
 
         service tt => Template->new(INCLUDE_PATH => $self->tt_root);

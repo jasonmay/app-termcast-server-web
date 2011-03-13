@@ -22,5 +22,7 @@ requires 'Term::VT102::Incremental';
 
 requires 'DateTime';
 
+requires 'YAML';
+
 auto_install();
 WriteAll();

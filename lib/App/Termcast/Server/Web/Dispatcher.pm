@@ -44,6 +44,7 @@ on ['tv', qr/[\w-]+/] => sub {
     my $tt          = delete $args{tt};
     my $connections = delete $args{connections};
     my $params      = delete $args{params};
+    my $config      = delete $args{config};
     my $stream_id   = $2;
 
     my $conn_fd = $connections->stream_to_fd->{$stream_id};
@@ -51,10 +52,22 @@ on ['tv', qr/[\w-]+/] => sub {
 
     if ($conn_fd and $connections->streams->{$conn_fd}) {
         my $stream  = $connections->streams->{$conn_fd};
-        $tt->process('viewer.tt', { viewer_template => 'terminal.tt', stream => $stream, params => $params, viewer_template => 'terminal.tt' }, \$data);
+        $tt->process(
+            'viewer.tt', {
+                config          => $config,
+                stream          => $stream,
+                params          => $params,
+                viewer_template => 'terminal.tt'
+            }, \$data
+        );
     }
     else {
-        $tt->process('viewer.tt', { viewer_template => 'notfound.tt' }, \$data);
+        $tt->process(
+            'viewer.tt', {
+                config          => $config,
+                viewer_template => 'notfound.tt',
+            }, \$data
+        );
     }
 
     return $data;

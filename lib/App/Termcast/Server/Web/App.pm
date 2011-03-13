@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use parent 'Plack::Component';
 
-use Plack::Util::Accessor qw(tc_socket tt connections hippie);
+use Plack::Util::Accessor qw(tt connections hippie config);
 use Plack::Builder;
 use Plack::App::Cascade;
 use Web::Hippie::App::JSFiles;
@@ -95,6 +95,7 @@ sub web_response {
             tt          => $self->tt,
             connections => $self->connections,
             params      => {%{$req->parameters}}, #unbless
+            config      => $self->config,
         );
 
         my $body;
@@ -104,6 +105,7 @@ sub web_response {
                 tt          => $self->tt,
                 connections => $self->connections,
                 params      => {%{$req->parameters}}, #unbless
+                config      => $self->config,
             );
         }
         else {

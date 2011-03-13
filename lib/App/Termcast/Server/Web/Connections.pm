@@ -25,9 +25,9 @@ has hippie => (
     required => 1,
 );
 
-has tc_socket => (
+has config => (
     is       => 'ro',
-    isa      => 'Str',
+    isa      => 'HashRef',
     required => 1,
 );
 
@@ -195,7 +195,7 @@ sub vivify_connection {
     my $self = shift;
 
     require Cwd;
-    tcp_connect 'unix/', Cwd::abs_path($self->tc_socket), sub {
+    tcp_connect 'unix/', Cwd::abs_path($self->config->{socket}), sub {
         my ($fh) = @_ or die $!;
 
         my $handle = AnyEvent::Handle->new(

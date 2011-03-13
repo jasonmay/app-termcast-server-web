@@ -11,3 +11,4 @@ MANIFEST.bak
 *.sw[po]
 .build
 {{$dist->name}}-*
+etc/config.yml
