@@ -47,10 +47,15 @@ on ['tv', qr/[\w-]+/] => sub {
     my $stream_id   = $2;
 
     my $conn_fd = $connections->stream_to_fd->{$stream_id};
-    my $stream  = $connections->streams->{$conn_fd};
-
     my $data;
-    $tt->process('viewer.tt', { stream => $stream, params => $params }, \$data);
+
+    if ($conn_fd and $connections->streams->{$conn_fd}) {
+        my $stream  = $connections->streams->{$conn_fd};
+        $tt->process('viewer.tt', { viewer_template => 'terminal.tt', stream => $stream, params => $params, viewer_template => 'terminal.tt' }, \$data);
+    }
+    else {
+        $tt->process('viewer.tt', { viewer_template => 'notfound.tt' }, \$data);
+    }
 
     return $data;
 };

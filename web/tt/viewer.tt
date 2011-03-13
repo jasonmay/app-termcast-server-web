@@ -4,95 +4,6 @@
 <link href="../static/styles/main.css" media="screen" rel="stylesheet" type="text/css" />
 <link href="../static/styles/viewer.css" media="screen" rel="stylesheet" type="text/css" />
 <script src="../static/js/jquery-1.4.1.js"></script>
-<script type="text/javascript" src="../static/js/stream.js"> </script>
-<script src="/jquery.ev.js"></script>
-<script src="/DUI.js"></script>
-<script src="/Stream.js"></script>
-<script src="../static/myhippie.js"></script>
-<script src="/hippie.pipe.js"></script>
-<script src="/json2.js"></script>
-<script type="text/javascript">
-// <!--
-
-function setup_terminal() {
-    var width = $('#pos-1-1').width() * [% stream.cols %];
-
-    var pos = $('#container').offset();
-    $('#container').width(width);
-
-    var border_width = 10;
-    $('#caption').width(width + border_width * 2);
-}
-
-$(function() {
-
-    $('#notice').text('Connecting.');
-    $('#terminal').hide();
-
-    var canvas =
-    [% IF params.old %]
-        undefined; // forced degradation!
-    [% ELSE %]
-        document.getElementById('terminal_canvas');
-    [% END %]
-
-    var connect_func, message_func, error_func;
-    var screen = {};
-
-    if (canvas && canvas.getContext && canvas.getContext('2d')) {
-        connect_func = function() {
-            $('#notice').hide();
-            $('#terminal').show(); // don't fade - makes canvas sad
-            canvas.streamer_username = '[% stream.username %]';
-            init_canvas(canvas, [% stream.cols %], [% stream.lines %]);
-        };
-
-        message_func = function(data) {
-            update_canvas(data, canvas.getContext('2d'), screen, [% stream.cols %], [% stream.lines %]);
-        };
-    }
-    else {
-        connect_func = function() {
-            write_cells([% stream.cols %], [% stream.lines %]);
-            $('#notice').fadeOut('fast', function() {
-                $('#terminal').fadeIn('fast');
-                setup_terminal();
-            });
-        };
-
-        message_func = function(data) {
-            termcast_cb(data, [% stream.cols %], [% stream.lines %]);
-        };
-    }
-
-    error_func = function() {
-        $('#container').slideUp('slow', function() {
-            $('#notice').html("Stream appears to be down.").fadeIn('slow');
-        });
-    };
-
-    var hpipe = new Hippie.Pipe();
-    var status = $('#notice');
-
-    hpipe.args = '[% stream.id %]';
-
-    jQuery(hpipe)
-    .bind('connected', connect_func)
-    .bind('disconnected', error_func)
-    .bind('reconnecting', function(e, data) {
-        status.text('Whoops, stream server went down! Trying to reconnect...');
-        $('#terminal').hide();
-    })
-    .bind('message.data', function(e, d) {
-        //console.log(d);
-        message_func(d.data);
-    });
-
-    hpipe.init();
-});
-
-// -->
-</script>
 </head>
 <body>
 <img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
@@ -102,15 +13,7 @@ $(function() {
     </li>
 </ul>
 <hr />
-<div id="terminal">
-<div id="caption">Viewing: [% stream.username %] ([% stream.cols %]x[% stream.lines %])</div>
-[% UNLESS params.old %] <canvas id="terminal_canvas"> [% END %]
-<!--<canvas id="terminal_canvas">-->
-<div id="container"> </div>
-[% UNLESS params.old %]</canvas>[% END %]
-<!--</canvas>-->
-</div>
-<div id="notice"> </div>
+[% INCLUDE $viewer_template %]
 </body>
 </html>
 
