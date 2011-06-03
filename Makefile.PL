@@ -10,13 +10,13 @@ requires 'Web::Hippie';
 requires 'Twiggy';
 requires 'EV'; # needs to be installed to work around a current TWiggy bug (3/7)
 requires 'AnyEvent';
-requires 'AnyMQ';
 requires 'Moose';
 requires 'Path::Dispatcher';
 requires 'Path::Dispatcher::Declarative';
 requires 'Bread::Board' => '0.15';
 requires 'Set::Object';
 requires 'AnyEvent';
+requires 'DateTime::Format::Human::Duration';
 requires 'Template';
 requires 'Term::VT102::Incremental';
 
