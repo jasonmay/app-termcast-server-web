@@ -12,3 +12,6 @@ MANIFEST.bak
 .build
 {{$dist->name}}-*
 etc/config.yml
+Web.bs
+Web.c
+Web.o

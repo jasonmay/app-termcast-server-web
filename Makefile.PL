@@ -18,7 +18,7 @@ requires 'Set::Object';
 requires 'AnyEvent';
 requires 'DateTime::Format::Human::Duration';
 requires 'Template';
-requires 'Term::VT102::Incremental';
+requires 'Term::VT102::Incremental' => '0.05';
 
 requires 'DateTime';
 

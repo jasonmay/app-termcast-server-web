@@ -1,6 +1,9 @@
 package App::Termcast::Server::Web::Hippie::Handle;
 use Moose;
 
+use App::Termcast::Server::Web::VT102i;
+use App::Termcast::Server::Web::VT102;
+
 has handle => (
     is => 'ro',
     required => 1,
@@ -14,7 +17,7 @@ has stream => (
 
 has vt => (
     is => 'ro',
-    isa => 'Term::VT102::Incremental',
+    isa => 'App::Termcast::Server::Web::VT102i',
     lazy    => 1,
     builder => '_build_vt',
     clearer => 'clear_vt',
@@ -60,7 +63,7 @@ sub make_vt {
     my $self = shift;
     my %args = @_;
 
-    my $vt = Term::VT102::Incremental->new(%args);
+    my $vt = App::Termcast::Server::Web::VT102i->new(%args);
     $vt->vt->option_set('LINEWRAP', 1);
 
     return $vt;
