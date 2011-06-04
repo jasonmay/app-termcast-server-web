@@ -4,6 +4,7 @@ use warnings;
 use parent 'Plack::Component';
 
 use Plack::Util::Accessor qw(tt connections hippie config);
+use Plack::Request;
 use Plack::Builder;
 use Plack::App::Cascade;
 use Web::Hippie::App::JSFiles;
@@ -13,9 +14,11 @@ use App::Termcast::Server::Web::Dispatcher;
 use App::Termcast::Server::Web::Hippie::Handle;
 
 use Scalar::Util qw(weaken);
+use Try::Tiny;
 
 sub call {
     my ($self, $env) = @_;
+    my $req = Plack::Request->new($env);
 
     my $app = builder {
         mount '/_hippie' => builder {
@@ -24,7 +27,16 @@ sub call {
             sub {
                 my ($env) = @_;
 
-                return $self->hippie_response($env);
+                my $result;
+                try {
+                    $result = $self->hippie_response($env);
+                }
+                catch {
+                    $result = $req->new_response(500);
+                    warn $_;
+                };
+
+                return $result;
             }
         };
 
@@ -32,7 +44,15 @@ sub call {
             enable 'Plack::Middleware::Static',
                 path => qr!^/?(?:static/|favicon\.ico)!, root => 'web/';
 
-            return $self->web_response($env);
+                my $result;
+                try {
+                    $result = $self->web_response($env);
+                }
+                catch {
+                    $result = $req->new_response(500);
+                    warn $_;
+                };
+            return $result;
         };
 
     };
