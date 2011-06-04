@@ -6,6 +6,9 @@ use Template;
 
 use YAML;
 
+require XSLoader;
+XSLoader::load(__PACKAGE__);
+
 extends 'Bread::Board::Container';
 
 has '+name' => ( default => sub { (shift)->meta->name } );
