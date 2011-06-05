@@ -10,7 +10,7 @@ has connections => (
     required => 1,
 );
 
-sub init {
+sub new_listener {
     my $self = shift;
     my ($r) = @_;
 

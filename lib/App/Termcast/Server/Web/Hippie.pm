@@ -50,8 +50,8 @@ sub build_middleware {
 }
 
 router as {
-    route '/init' => 'root.init';
-    route '/error' => 'root.error';
+    route '/new_listener' => 'root.new_listener';
+    route '/error'        => 'root.error';
 
     mount '/files' => 'Web::Hippie::App::JSFiles';
 }, (root => 'root');
