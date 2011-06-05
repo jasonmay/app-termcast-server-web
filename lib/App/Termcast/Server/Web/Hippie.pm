@@ -26,32 +26,32 @@ sub build_middleware {
     [
         Web::Hippie->new,
         Web::Hippie::Pipe->new(bus => AnyMQ->new),
-#        sub {
-#            my $app = shift;
-#            sub {
-#                my $env = shift;
-#                my $res =  $app->($env);
-#
-#                return Plack::Util::response_cb(
-#                    $res, sub {
-#                        my $res = shift;
-#                        warn "200 THIS SHIT";
-#                        if ($res->[0] != 200) {
-#                            return [
-#                                200,
-#                                ['Content-Type' => 'application/hippie'],
-#                                ['']
-#                            ];
-#                        }
-#                    },
-#                );
-#            };
-#        },
+        sub {
+            my $app = shift;
+            sub {
+                my $env = shift;
+                my $res =  $app->($env);
+
+                $res = Plack::Util::response_cb(
+                    $res, sub {
+                        my $res = shift;
+                        if ($res->[0] != 200) {
+                            @$res = (
+                                200,
+                                ['Content-Type' => 'application/hippie'],
+                                ['']
+                            );
+                        }
+                    },
+                );
+                return $res;
+            };
+        },
     ];
 }
 
 router as {
-    route '/new_listener' => 'root.new_listener';
+    route '/init' => 'root.init';
     route '/error' => 'root.error';
 
     mount '/files' => 'Web::Hippie::App::JSFiles';

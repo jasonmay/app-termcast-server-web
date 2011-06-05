@@ -1,17 +1,25 @@
 package App::Termcast::Server::Web::Hippie::Root;
 use Moose;
 
+use App::Termcast::Server::Web::Hippie::Handle;
+use Scalar::Util 'weaken';
+
 has connections => (
     is       => 'ro',
     isa      => 'App::Termcast::Server::Web::Connections',
     required => 1,
 );
 
-sub new_listener {
+sub init {
     my $self = shift;
     my ($r) = @_;
 
-    my $h         = $r->env->{'hippie.handle'};
+    my $h = $r->env->{'hippie.handle'} or do {
+        my $res = $r->new_response(400);
+        $res->content_type('text/plain');
+        return $res;
+    };
+
     my $stream_id = $r->env->{'hippie.args'};
 
     my $stream = $self->connections->get_stream($stream_id);
@@ -37,9 +45,10 @@ sub new_listener {
     # send buffer to get the viewer caught up
     $hh->send_to_browser($stream->buffer);
 
-    my $res = $r->new_response(200);
-    $res->content_type('application/hippie');
-    return $res;
+    #my $res = $r->new_response(200);
+    #$res->content_type('application/hippie');
+    #return $res;
+    '';
 }
 
 sub error {
@@ -48,6 +57,17 @@ sub error {
     my $h = $r->env->{'hippie.handle'};
 
     $self->connections->hippie_handles->remove($h) if $h;
+}
+
+sub misc {
+    my $self = shift;
+    my ($r) = @_;
+
+    my $res = $r->new_response(200);
+    $res->content_type('application/hippie');
+    $res->body('');
+
+    return $res;
 }
 
 no Moose;

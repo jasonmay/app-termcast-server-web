@@ -74,7 +74,7 @@ $(function() {
     .bind('connected', connect_func)
     .bind('disconnected', error_func)
     .bind('reconnecting', function(e, data) {
-        status.text('Whoops, stream server went down! Trying to reconnect...');
+        status.text('Loading...');
         $('#terminal').hide();
     })
     .bind('message.data', function(e, d) {
