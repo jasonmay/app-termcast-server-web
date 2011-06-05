@@ -2,8 +2,9 @@ package App::Termcast::Server::Web::Connections;
 use Moose;
 
 use AnyEvent::Socket;
-
 use App::Termcast::Server::Web::Stream;
+
+use Set::Object 'set';
 
 has streams => (
     is      => 'ro',
@@ -19,10 +20,10 @@ has streams => (
 );
 
 # websocket handles from Web::Hippie
-has hippie => (
-    is       => 'ro',
-    isa      => 'App::Termcast::Server::Web::Hippie',
-    required => 1,
+has hippie_handles => (
+    is      => 'ro',
+    isa     => 'Set::Object',
+    default => sub { set() },
 );
 
 has config => (

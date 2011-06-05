@@ -1,75 +1,89 @@
 package App::Termcast::Server::Web;
-use Moose;
-use Bread::Board;
+use XSLoader;
+use OX;
+
+use Plack::Request;
+use Plack::Middleware::Static;
 
 use Template;
 
 use YAML;
+use Path::Class 'dir';
+use MooseX::Types::UUID 'UUID';
+use MooseX::Types::Path::Class;
 
-require XSLoader;
-XSLoader::load(__PACKAGE__);
-
-extends 'Bread::Board::Container';
-
-has '+name' => ( default => sub { (shift)->meta->name } );
-
-has port => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 5000,
-);
+with 'OX::Role::WithAppRoot';
 
 has tt_root => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => 'web/tt',
+    is        => 'ro',
+    isa       => 'Path::Class::Dir',
+    lifecycle => 'Singleton',
+    coerce    => 1,
+    block     => sub { shift->param('app_root')->subdir('web', 'tt') },
+    dependencies => ['app_root'],
 );
 
-sub BUILD {
-    my $self = shift;
-    container $self => as {
+has tt => (
+    is => 'ro',
+    isa => 'Template',
+    block => sub {
+        my $service = shift;
+        return Template->new(INCLUDE_PATH => $service->param('tt_root'));
+    },
+    dependencies => ['tt_root'],
+);
 
-        service config    => YAML::LoadFile('etc/config.yml');
+has config => (
+    is        => 'ro',
+    lifecycle => 'Singleton',
+    block     => sub {
+        my $file = shift->param('app_root')->subdir('etc')->file('config.yml');
+        return YAML::LoadFile($file->stringify);
+    },
+    dependencies => ['app_root'],
+);
 
-        service plack_app => (
-            block         => sub {
-                my $service   = shift;
-                my $app_class = 'App::Termcast::Server::Web::App';
-                Class::MOP::load_class($app_class);
+has connections    => (
+    is           => 'ro',
+    isa          => 'App::Termcast::Server::Web::Connections',
+    lifecycle    => 'Singleton',
+    dependencies => ['config'],
+);
 
-                return $app_class->new( %{$service->params} );
-            },
-            lifecycle    => 'Singleton',
-            dependencies => [
-                'hippie',
-                'tt',
-                'connections',
-                'config',
-            ],
-        );
+has tv => (
+    is           => 'ro',
+    isa          => 'App::Termcast::Server::Web::TV',
+    lifecycle    => 'Singleton',
+    dependencies => ['connections', 'tt', 'config'],
+);
 
-        service hippie => (
-            class     => 'App::Termcast::Server::Web::Hippie',
-            lifecycle => 'Singleton',
-        );
+#has hippie_mw => (
+#    is           => 'ro',
+#    isa          => 'App::Termcast::Server::Web::Hippie::MW',
+#    lifecycle    => 'Singleton',
+#    dependencies => ['connections', 'tt', 'config'],
+#);
 
-        service connections    => (
-            class        => 'App::Termcast::Server::Web::Connections',
-            lifecycle    => 'Singleton',
-            dependencies => ['hippie', 'config'],
-        );
-
-        service tt => Template->new(INCLUDE_PATH => $self->tt_root);
-    };
+sub build_middleware {
+        [
+            Plack::Middleware::Static->new(
+                path => qr!^/?(?:static/|favicon\.ico)!,
+                root => 'web/',
+            ),
+        ]
 }
 
-sub final_app {
-    my $self = shift;
-    $self->resolve(service => 'connections')->vivify_connection();
-    return $self->resolve(service => 'plack_app')->to_app();
-}
+router as {
+    route '/'       => 'tv.users';
+    route '/tv/:id' => 'tv.view',
+        id => { isa => UUID };
 
-__PACKAGE__->meta->make_immutable;
+    mount '/_hippie' => 'App::Termcast::Server::Web::Hippie' => (
+        connections => 'connections',
+    );
+}, (tv => 'tv');
+
+XSLoader::load(__PACKAGE__);
 no Moose;
 
 1;

@@ -1,15 +1,32 @@
 package App::Termcast::Server::Web::Hippie;
-use Moose;
-use Set::Object qw(set);
+use OX;
+use Web::Hippie;
+use Web::Hippie::Pipe;
+use AnyMQ;
 
-# { topic => handle }
-has hippie_handles => (
-    is => 'ro',
-    isa => 'Set::Object',
-    default => sub { set() },
+has connections => (
+    is      => 'ro',
+    isa     => 'App::Termcast::Server::Web::Connections',
+    required => 1,
 );
 
-__PACKAGE__->meta->make_immutable;
+has root => (
+    is    => 'ro',
+    isa   => 'App::Termcast::Server::Web::Hippie::Root',
+    infer => 1,
+);
+
+sub build_middleware {
+    [
+        Web::Hippie->new,
+        Web::Hippie::Pipe->new(bus => AnyMQ->new),
+    ];
+}
+
+router as {
+    route '/:action' => 'root._';
+}, (root => 'root');
+
 no Moose;
 
 1;

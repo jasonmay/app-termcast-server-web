@@ -60,46 +60,6 @@ sub call {
     return $app->($env);
 }
 
-sub hippie_response {
-    my $self = shift;
-    my $env  = shift;
-
-    my $h = $env->{'hippie.handle'};
-
-    if ($env->{PATH_INFO} eq '/new_listener') {
-        my $stream_id = $env->{'hippie.args'};
-
-        my $stream = $self->connections->get_stream($stream_id);
-
-        my $hh = App::Termcast::Server::Web::Hippie::Handle->new(
-            stream => $stream_id,
-            handle => $h,
-            lines  => $stream->lines,
-            cols   => $stream->cols,
-        );
-
-        if ($h->isa('Web::Hippie::Handle::WebSocket')) {
-            weaken(my $weak_hippie = $hh);
-            $h->h->on_error(
-                sub {
-                    $self->hippie->hippie_handles->remove($weak_hippie);
-                }
-            );
-        }
-
-        $self->hippie->hippie_handles->insert($hh);
-
-        # send buffer to get the viewer caught up
-        $hh->send_to_browser($stream->buffer);
-    }
-    else {
-        if ($env->{PATH_INFO} eq '/error') {
-            $self->hippie->handles->remove($h) if $h;
-        }
-    }
-    return [ '200', [ 'Content-Type' => 'application/hippie' ], [ "" ] ]
-}
-
 sub web_response {
     my $self = shift;
     my $env  = shift;
