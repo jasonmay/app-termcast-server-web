@@ -1,10 +1,10 @@
 <script type="text/javascript" src="../static/js/stream.js"> </script>
-<script src="/jquery.ev.js"></script>
-<script src="/DUI.js"></script>
-<script src="/Stream.js"></script>
+<script src="/_hippie/files/jquery.ev.js"></script>
+<script src="/_hippie/files/DUI.js"></script>
+<script src="/_hippie/files/Stream.js"></script>
 <script src="../static/myhippie.js"></script>
-<script src="/hippie.pipe.js"></script>
-<script src="/json2.js"></script>
+<script src="/_hippie/files/hippie.pipe.js"></script>
+<script src="/_hippie/files/json2.js"></script>
 <script type="text/javascript">
 // <!--
 

@@ -148,7 +148,7 @@ sub handle_metadata {
 
         my @hippie_handles =
             grep { $_->stream eq $stream_id }
-            $self->hippie->hippie_handles->members;
+            $self->hippie_handles->members;
 
         foreach my $hh (@hippie_handles) {
             $hh->send_resize_to_browser($cols, $lines);

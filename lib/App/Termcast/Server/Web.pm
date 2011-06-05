@@ -9,7 +9,6 @@ use Template;
 
 use YAML;
 use Path::Class 'dir';
-use MooseX::Types::UUID 'UUID';
 use MooseX::Types::Path::Class;
 
 with 'OX::Role::WithAppRoot';
@@ -57,13 +56,6 @@ has tv => (
     dependencies => ['connections', 'tt', 'config'],
 );
 
-#has hippie_mw => (
-#    is           => 'ro',
-#    isa          => 'App::Termcast::Server::Web::Hippie::MW',
-#    lifecycle    => 'Singleton',
-#    dependencies => ['connections', 'tt', 'config'],
-#);
-
 sub build_middleware {
         [
             Plack::Middleware::Static->new(
@@ -73,10 +65,12 @@ sub build_middleware {
         ]
 }
 
+sub BUILD { shift->connections->vivify_connection }
+
 router as {
     route '/'       => 'tv.users';
     route '/tv/:id' => 'tv.view',
-        id => { isa => UUID };
+        id => { isa => 'Str' };
 
     mount '/_hippie' => 'App::Termcast::Server::Web::Hippie' => (
         connections => 'connections',

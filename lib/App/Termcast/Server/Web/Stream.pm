@@ -68,7 +68,7 @@ sub connect {
                 my $h = shift;
                 #warn "$h->{rbuf}\n";
 
-                my @hh = $self->connections->hippie->hippie_handles->members;
+                my @hh = $self->connections->hippie_handles->members;
                 my $cleared = 0;
                 if ($h->{rbuf} =~ s/.\e\[2J//s) {
                     $self->buffer('');
@@ -98,7 +98,7 @@ sub connect {
 
                     my $stream = $self->connections->streams->{ fileno($h->fh) };
 
-                    my @hh = $self->connections->hippie->hippie_handles->members;
+                    my @hh = $self->connections->hippie_handles->members;
 
                     foreach my $hh ( @hh ) {
                         next unless $hh->stream eq $stream->id;

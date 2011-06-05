@@ -7,6 +7,8 @@ use Web::Hippie;
 use Web::Hippie::Pipe;
 use AnyMQ;
 
+use Try::Tiny;
+
 sub call {
     my ($self, $env) = @_;
 

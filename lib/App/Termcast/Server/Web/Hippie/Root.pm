@@ -47,7 +47,7 @@ sub error {
     my ($r) = @_;
     my $h = $r->env->{'hippie.handle'};
 
-    $self->hippie->handles->remove($h) if $h;
+    $self->connections->hippie_handles->remove($h) if $h;
 }
 
 no Moose;
