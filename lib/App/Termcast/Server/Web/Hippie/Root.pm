@@ -45,7 +45,7 @@ sub new_listener {
     # send buffer to get the viewer caught up
     $hh->send_to_browser($stream->buffer);
 
-    return $self->misc(@_);
+    return $self->hippie_response($r);
 }
 
 sub error {
@@ -56,7 +56,7 @@ sub error {
     $self->connections->hippie_handles->remove($h) if $h;
 }
 
-sub misc {
+sub hippie_response {
     my $self = shift;
     my ($r) = @_;
 
