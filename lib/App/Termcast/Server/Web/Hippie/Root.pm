@@ -45,10 +45,7 @@ sub init {
     # send buffer to get the viewer caught up
     $hh->send_to_browser($stream->buffer);
 
-    #my $res = $r->new_response(200);
-    #$res->content_type('application/hippie');
-    #return $res;
-    '';
+    return $self->misc(@_);
 }
 
 sub error {
@@ -67,7 +64,7 @@ sub misc {
     $res->content_type('application/hippie');
     $res->body('');
 
-    return $res;
+    return $res->finalize;
 }
 
 no Moose;
