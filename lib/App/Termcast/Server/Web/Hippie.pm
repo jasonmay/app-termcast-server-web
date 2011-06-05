@@ -30,10 +30,10 @@ sub build_middleware {
                 my $env = shift;
                 my $res =  $app->($env);
 
-                $res = Plack::Util::response_cb(
+                return Plack::Util::response_cb(
                     $res, sub {
                         my $res = shift;
-                        if ($res->[0] != 200) {
+                        if ($res->[0] eq '404') {
                             @$res = (
                                 200,
                                 ['Content-Type' => 'application/hippie'],
@@ -42,7 +42,6 @@ sub build_middleware {
                         }
                     },
                 );
-                return $res;
             };
         },
         Web::Hippie::Pipe->new(bus => AnyMQ->new),
