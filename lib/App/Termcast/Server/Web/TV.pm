@@ -24,10 +24,10 @@ sub users {
     my $self = shift;
     my ($r) = @_;
 
-    my $connections = $self->connectiosn;
+    my $connections = $self->connections;
     my $tt = $self->tt;
 
-    my @hh = $connections->hippie->hippie_handles->members;
+    my @hh = $connections->hippie_handles->members;
     my %stream_data;
 
     my @streams = values %{$connections->streams || {}};
