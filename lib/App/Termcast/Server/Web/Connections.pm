@@ -3,6 +3,7 @@ use Moose;
 
 use AnyEvent::Socket;
 use App::Termcast::Server::Web::Stream;
+use App::Termcast::Connector;
 
 use Set::Object 'set';
 
@@ -53,18 +54,19 @@ has notice_buffer => (
     default => sub { +{} },
 );
 
+has connector => (
+    is => 'ro',
+    isa => 'App::Termcast::Connector',
+    default => sub { App::Termcast::Connector->new },
+);
+
 sub _read_event {
     my $self = shift;
     my $h = shift;
 
     $h->push_read(json => sub {
         my ($h, $data) = @_;
-        if ($data->{notice}) {
-            $self->handle_server_notice($data);
-        }
-        elsif ($data->{response}) {
-            $self->handle_server_response($h, $data);
-        }
+        $self->connector->dispatch($data, decoded => 1);
     });
 }
 
@@ -79,60 +81,17 @@ sub _ask_for_stream_list {
 
 sub check_if_unprepared {
     my $self      = shift;
-    my $stream_id = shift;
-    my $data      = shift;
+    my ($type, $session_id, @stuff) = @_;
 
-    if (!$self->stream_to_fd->{$stream_id}) {
-        $self->notice_buffer->{$stream_id} ||= [];
-        push @{ $self->notice_buffer->{$stream_id} }, $data;
+    if (!$self->stream_to_fd->{$session_id}) {
+        $self->notice_buffer->{$session_id} ||= [];
+        push @{ $self->notice_buffer->{$session_id} },
+             [ $type, @stuff ];
+
         return 0;
     }
 
     return 1;
-}
-
-sub handle_server_notice {
-    my $self = shift;
-    my $data = shift;
-
-    if ($data->{notice} eq 'connect') {
-        my $conn_data = $data->{connection};
-
-        $self->make_stream(%$conn_data);
-    }
-    if ($data->{notice} eq 'metadata') {
-        my $metadata  = $data->{metadata};
-        my $stream_id = $data->{session_id};
-
-        $self->check_if_unprepared($stream_id, $data) or return;
-
-        $self->handle_metadata($stream_id, $metadata);
-    }
-    elsif ($data->{notice} eq 'disconnect') {
-        my $stream_id = $data->{session_id};
-
-        $self->check_if_unprepared($stream_id, $data) or return;
-
-        my $fd        = $self->stream_to_fd->{$stream_id};
-        $self->delete_stream($fd);
-    }
-}
-
-sub handle_server_response {
-    my $self = shift;
-    my $h    = shift;
-    my $data = shift;
-
-    if ($data->{response} eq 'sessions') {
-        my @sessions = @{ $data->{sessions} };
-        if (@sessions) {
-            $self->clear_streams;
-
-            foreach my $conn_data (@sessions) {
-                $self->make_stream(%$conn_data);
-            }
-        }
-    }
 }
 
 sub handle_metadata {
@@ -194,6 +153,40 @@ sub get_stream {
 
 sub vivify_connection {
     my $self = shift;
+
+    my $sessions_cb = sub {
+        my ($connector, @sessions) = @_;
+        $self->clear_streams;
+
+        foreach my $conn_data (@sessions) {
+            $self->make_stream(%$conn_data);
+        }
+    };
+
+    my $connect_cb = sub {
+        my ($connector, $data) = @_;
+        $self->make_stream(%$data);
+    };
+
+    my $disconnect_cb = sub {
+        my ($connector, $session_id) = @_;
+
+        $self->check_if_unprepared('disconnect', $session_id) or return;
+
+        my $fd        = $self->stream_to_fd->{$session_id};
+        $self->delete_stream($fd);
+    };
+
+    my $metadata_cb = sub {
+        my ($connector, $session_id, $data) = @_;
+        $self->check_if_unprepared('metadata', $session_id, $data) or return;
+        $self->handle_metadata($session_id, $data);
+    };
+
+    $self->connector->register_sessions_callback($sessions_cb);
+    $self->connector->register_connect_callback($connect_cb);
+    $self->connector->register_disconnect_callback($disconnect_cb);
+    $self->connector->register_metadata_callback($metadata_cb);
 
     require Cwd;
     tcp_connect 'unix/', Cwd::abs_path($self->config->{socket}), sub {

@@ -122,9 +122,17 @@ sub connect {
 
         $self->connections->stream_to_fd->{$self->id} = $fd;
 
+        my %cb_map = (
+            metadata   => 'metadata_cb',
+            disconnect => 'disconnect_cb',
+        );
+
         if (my $notices_ref = delete $self->connections->notice_buffer->{$self->id}) {
             foreach my $notice_data (@$notices_ref) {
-                $self->connections->handle_server_notice($notice_data);
+                my ($type, @stuff) = @$notice_data;
+                my $cb_accessor = $cb_map{$type} or next;
+
+                $self->connections->connector->$cb_accessor->($type, @stuff);
             }
         }
     };
