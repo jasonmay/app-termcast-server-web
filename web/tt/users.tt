@@ -2,6 +2,7 @@
 <head>
 <title>Termcast</title>
 <link href="static/styles/main.css" media="screen" rel="stylesheet" type="text/css" />
+<script src="static/js/terms.js" type="text/javascript" charset="utf-8"></script>
 <script src="static/js/jquery-1.4.1.js"></script>
 </head>
 <body>
@@ -15,10 +16,12 @@
 [% NEXT UNLESS stream_data.$stream_id.object %]
 <li>
 
-    <strong><a href="tv/[% stream_id %]">[% stream_data.$stream_id.object.username %]</a></strong>
+    <strong>
+    <a href="tv/[% stream_id %]">[% stream_data.$stream_id.object.username %]</a>
+    </strong>
 
     - idle <span class="idle">[% stream_data.$stream_id.idle %]</span>
-
+    (<a href="#" onclick="open_term_window('tv/[% stream_id %]?term=1')">popup</a>)
 </li>
 
 [% END %]

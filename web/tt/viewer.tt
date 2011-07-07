@@ -6,6 +6,7 @@
 <script src="../static/js/jquery-1.4.1.js"></script>
 </head>
 <body>
+[% UNLESS params.term %]
 <img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
 <ul class="nav">
     <li>
@@ -13,6 +14,7 @@
     </li>
 </ul>
 <hr />
+[% END %]
 [% INCLUDE $viewer_template %]
 </body>
 </html>
