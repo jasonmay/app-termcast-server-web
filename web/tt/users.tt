@@ -30,23 +30,21 @@ Nobody is streaming at this time.
 <hr />
 <h2>About Termcast</h2>
 <p>
-To be honest, this isn't the <em>real</em> termcast.
-<a href="http://termcast.org">This</a> is. I am currently working on a
+I am currently working on a
 <a href="https://github.com/jasonmay/app-termcast-server">standalone termcast server</a>
 that just opens a bunch of sockets, allowing anything to connect to it and retrieve
 streaming data. This web application is an example of that!
 </p>
+<ul>
+<li><a href="http://www.slideshare.net/jarsonmar/broadcast-your-programming">YAPC::NA 2011 Presentation on Termcast</a></li>
+<li><a href="http://jarsonmar.blogspot.com/2011/03/termcast-on-web.html">Blog post: Termcast on the Web</a></li>
+</ul>
 <h2>Streaming Instructions</h2>
 <p>
     <pre style="background-color: white; border: solid 1px black; width: 600px">
-    git clone git://github.com/jasonmay/app-termcast.git
-    cd app-termcast
-    perl -Ilib bin/termcast --host jarsonmar.org
+    [Install App::Termcast with your favorite CPAN module installer]
+    termcast --host jarsonmar.org
     </pre>
-
-    This is just a fork of doy's App::Termcast but my fork is the only client
-    that will work on my server (for custom term geometry). Not merging until
-    I am happy with my implementation. Sorry!
 </p>
 
 <h2>The Source Code</h2>
