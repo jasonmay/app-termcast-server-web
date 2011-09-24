@@ -1,8 +1,3 @@
-body {
-    font-family: helvetica,sans-serif;
-    font-size: 80%;
-}
-
 #caption {
     padding-left: 0;
     margin-left:  0;
@@ -36,10 +31,5 @@ body {
 .legend {
     color: black;
     background-color: white;
-}
-
-ul.nav {
-    margin: 0;
-    padding: 0;
 }
 
