@@ -7,8 +7,8 @@
 </head>
 <body>
 <div id="mainnav">
-<img src="/static/images/logo.png" id="logo" />&nbsp; &nbsp; &nbsp;
-<a href="/streams">Live Streams</a> -
+<a href="/streams">Live Streams</a> &nbsp; &nbsp; &nbsp;
+<img src="/static/images/logo.png" id="logo" /> &nbsp; &nbsp; &nbsp;
 <a href="/about">About Termcast</a>
 </div>
 <div id="content">
