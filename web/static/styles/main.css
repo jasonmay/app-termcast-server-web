@@ -23,9 +23,9 @@ img#logo {
 }
 #content {
     width: 800px;
-    height: 100%;
+    min-height: 100%;
     margin: 0 auto;
-    padding-left: 8px;
+    padding: 8px 20px 0 20px;
     background-color: #FFFCF2;
 }
 

@@ -203,8 +203,9 @@ function init_canvas(canvas, cols, lines) {
     canvas.height = Math.floor(cell_height * lines * spacing);
 
     var border_width = 1;
-    $('#caption').width(canvas.width + border_width * 2);
-    $('#terminal').width(canvas.width + border_width * 2);
+    var new_width = canvas.width + (border_width-1) * 2
+    $('#caption').width(new_width);
+    $('#terminal').width(new_width);
     $('#caption').text('Viewing: ' + canvas.streamer_username + ' (' + cols + 'x' + lines + ')');
     // ugh, have to set the font again after adjusting the canvas geometry
     set_font(context);

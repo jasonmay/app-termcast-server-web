@@ -1,31 +1,30 @@
 #caption {
-    padding-left: 0;
     margin-left:  0;
     background-color: black;
     color: #bbb;
     border: solid 1px white;
     font-weight: bold;
     text-align: center;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding: 3px 4px 3px 4px;
     font-size: 125%;
     letter-spacing: 2;
 }
 
-#container, #terminal_canvas {
+#terminal_canvas {
     margin-left: 0;
-    padding: 0;
+    padding: 4px;
     /*width: 50em;*/
 
     background-color: black;
     font-family: monaco, consolas, lucida console, monospace;
-    font-size: 80%;
+    /* font-size: 80%; */
     border: solid 1px white;
     border-top: 0;
 
 }
 
 #terminal {
+    margin: 0 auto;
     box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
     -moz-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
     -webkit-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
