@@ -2,7 +2,8 @@
 <script src="/_hippie/files/jquery.ev.js"></script>
 <script src="/_hippie/files/DUI.js"></script>
 <script src="/_hippie/files/Stream.js"></script>
-<script src="../static/myhippie.js"></script>
+<script src="/_hippie/files/hippie.js"></script>
+[% IF 0 %]<script src="../static/myhippie.js"></script>[% END %]
 <script src="/_hippie/files/hippie.pipe.js"></script>
 <script src="/_hippie/files/json2.js"></script>
 <script type="text/javascript">
@@ -60,9 +61,8 @@ $(function() {
     }
 
     error_func = function() {
-        $('#container').slideUp('slow', function() {
-            $('#notice').html("Stream appears to be down.").fadeIn('slow');
-        });
+        $('#container').hide();
+        $('#notice').html("Stream appears to be down.").show();
     };
 
     var hpipe = new Hippie.Pipe();

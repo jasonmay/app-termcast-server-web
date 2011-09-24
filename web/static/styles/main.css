@@ -1,10 +1,6 @@
 body {
     font-family: helvetica,sans-serif;
     font-size: 80%;
-    background: url('/static/images/termcast_gradient.png');
-    background-repeat: repeat-x;
-    background-color: #ffe;
-    color: #644;
 }
 
 a:link {
@@ -18,9 +14,6 @@ a:visited {
 .container h1 {
     background-color: #eef;
     border: solid 4px #55b;
-    -webkit-border-radius: 12px;
-    -moz-border-radius: 12px;
-    border-radius: 12px;
     padding: 4px 12px;
     color: black;
     width: 60%;
