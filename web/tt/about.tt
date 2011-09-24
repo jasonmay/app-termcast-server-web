@@ -1,9 +1,12 @@
 <h2>About Termcast</h2>
 <p>
-I am currently working on a
-<a href="https://github.com/jasonmay/app-termcast-server">standalone termcast server</a>
-that just opens a bunch of sockets, allowing anything to connect to it and retrieve
-streaming data. This web application is an example of that!
+This web application connects to a
+<a href="https://github.com/jasonmay/app-termcast-server">standalone termcast server</a>.
+
+It uses some HTML5 features (WebSockets, Canvas) on the front-end and PSGI (<a href="http://twiggy.plackperl.org/">Twiggy</a>, <a href="https://github.com/stevan/OX">OX</a>, <a href="https://metacpan.org/module/Web::Hippie">Web::Hippie</a>) on the back-end.
+</p>
+<p>
+I've given a few demonstrations and talks on Termcast. You can see some of them here:
 </p>
 <ul>
 <li><a href="http://www.slideshare.net/jarsonmar/broadcast-your-programming">YAPC::NA 2011 Presentation on Termcast</a></li>
