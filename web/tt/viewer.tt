@@ -1,3 +1,5 @@
 <link href="../static/styles/viewer.css" media="screen" rel="stylesheet" type="text/css" />
 <script src="../static/js/jquery-1.4.1.js"></script>
+<h1>Terminal Broadcast</h1>
+<hr class="titlerule" /><br />
 [% INCLUDE $viewer_template %]

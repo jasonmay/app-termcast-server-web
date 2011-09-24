@@ -31,7 +31,17 @@ img#logo {
     background-color: #FFFCF2;
 }
 
-.snippet{
+hr.titlerule {
+    text-align: center;
+    border: 0;
+    height: 2px;
+    background-color: #FAF1D4;
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+
+.snippet {
     font-family: Menlo,Monaco,'Bitstream Vera Sans','Andale Mono',monospace;
     background-color: black;
     border: solid 1px white;
@@ -71,10 +81,6 @@ a:visited {
 ul.nav {
     margin: 0;
     padding: 0;
-}
-
-hr {
-    border: dashed 1px #ca8;
 }
 
 .viewers {

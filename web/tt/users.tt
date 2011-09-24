@@ -1,4 +1,5 @@
-<h2>Live Streams</h2>
+<h1>Live Streams</h1>
+<hr class="titlerule" /><br />
 [% IF stream_data.keys.size %]
 <p>The following sessions are in progress:</p>
 <ul>

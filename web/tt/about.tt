@@ -1,4 +1,5 @@
-<h2>About Termcast</h2>
+<h1>About Termcast</h1>
+<hr class="titlerule" /><br />
 <p>
 This web application connects to a
 <a href="https://github.com/jasonmay/app-termcast-server">standalone termcast server</a>.
