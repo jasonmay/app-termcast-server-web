@@ -17,11 +17,13 @@ img#logo {
     margin: 0;
     text-align: center;
 }
+
 #mainnav a {
     color: #FFFCF2;
     text-decoration: none;
     font-weight: bold;
 }
+
 #content {
     width: 800px;
     height: 100%;
