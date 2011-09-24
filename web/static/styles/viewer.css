@@ -21,6 +21,13 @@
     font-size: 80%;
     border: solid 10px #aaa;
     border-top: 0;
+
+}
+
+#terminal {
+    box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+    -moz-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+    -webkit-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
 }
 
 #notice {
