@@ -5,13 +5,21 @@ body {
     font-size: 80%;
 }
 
+img#logo {
+    vertical-align: middle;
+}
+
 #mainnav {
-    background-color: #888;
-    padding: 2px;
+    background-color: black;
+    color: white;
+    border-bottom: solid 1px white;
+    height: 30px;
     margin: 0;
 }
 #mainnav a {
-    color: white;
+    color: #FFFCF2;
+    text-decoration: none;
+    font-weight: bold;
 }
 #content {
     width: 800px;
