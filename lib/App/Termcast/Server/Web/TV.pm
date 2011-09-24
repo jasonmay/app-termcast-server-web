@@ -54,6 +54,16 @@ sub users {
     return $data;
 }
 
+sub about {
+    my $self = shift;
+    my ($r) = @_;
+
+    my $tt = $self->tt;
+    my $data;
+    $tt->process('about.tt', {}, \$data);
+    return $data;
+}
+
 # view a streamer
 sub view {
     my $self = shift;

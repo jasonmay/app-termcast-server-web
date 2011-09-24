@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>Termcast</title>
+<link href="static/styles/main.css" media="screen" rel="stylesheet" type="text/css" />
+<script src="static/js/terms.js" type="text/javascript" charset="utf-8"></script>
+<script src="static/js/jquery-1.4.1.js"></script>
+</head>
+<body>
+<div>
+<img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
+</div>
+<nav>
+<a href="/streams">Live Streams</a> |
+<a href="/about">About Termcast</a>
+</nav>
+<hr />
+[% content %]
+</body>
+</html>

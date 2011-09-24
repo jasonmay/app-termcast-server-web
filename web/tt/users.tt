@@ -1,13 +1,3 @@
-<html>
-<head>
-<title>Termcast</title>
-<link href="static/styles/main.css" media="screen" rel="stylesheet" type="text/css" />
-<script src="static/js/terms.js" type="text/javascript" charset="utf-8"></script>
-<script src="static/js/jquery-1.4.1.js"></script>
-</head>
-<body>
-<img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
-<hr />
 <h2>Live Streams</h2>
 [% IF stream_data.keys.size %]
 <p>The following sessions are in progress:</p>
@@ -30,36 +20,3 @@
 Nobody is streaming at this time.
 [% END %]
 
-<hr />
-<h2>About Termcast</h2>
-<p>
-I am currently working on a
-<a href="https://github.com/jasonmay/app-termcast-server">standalone termcast server</a>
-that just opens a bunch of sockets, allowing anything to connect to it and retrieve
-streaming data. This web application is an example of that!
-</p>
-<ul>
-<li><a href="http://www.slideshare.net/jarsonmar/broadcast-your-programming">YAPC::NA 2011 Presentation on Termcast</a></li>
-<li><a href="http://jarsonmar.blogspot.com/2011/03/termcast-on-web.html">Blog post: Termcast on the Web</a></li>
-</ul>
-<h2>Streaming Instructions</h2>
-<p>
-    <pre style="background-color: white; border: solid 1px black; width: 600px">
-    [Install App::Termcast with your favorite CPAN module installer]
-    termcast --host jarsonmar.org
-    </pre>
-</p>
-
-<h2>The Source Code</h2>
-
-<ul>
-<li><a href="https://github.com/jasonmay/app-termcast-server">Standalone termcast server</a></li>
-<li><a href="https://github.com/jasonmay/app-termcast-server-web">Web termcast component</a></li>
-</ul>
-
-<h2>See a problem?</h2>
-<p>
-    Report it <a href="https://github.com/jasonmay/app-termcast-server-web/issues">here</a>!
-</p>
-</body>
-</html>

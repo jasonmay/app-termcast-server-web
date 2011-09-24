@@ -27,7 +27,10 @@ has tt => (
     isa => 'Template',
     block => sub {
         my $service = shift;
-        return Template->new(INCLUDE_PATH => $service->param('tt_root'));
+        return Template->new(
+            INCLUDE_PATH => $service->param('tt_root'),
+            WRAPPER      => 'wrapper.tt',
+        );
     },
     dependencies => ['tt_root'],
 );
@@ -67,8 +70,17 @@ sub build_middleware {
 
 sub BUILD { shift->connections->vivify_connection }
 
+sub streams_uri { '/streams' }
+
 router as {
-    route '/'       => 'tv.users';
+    route '/'       => sub {
+        my $res    = $_[0]->new_response;
+        my $prefix = $_[0]->script_name;
+        $res->redirect($prefix . streams_uri() );
+        return $res;
+    };
+    route streams_uri() => 'tv.users';
+    route '/about'       => 'tv.about';
     route '/tv/:id' => 'tv.view',
         id => { isa => 'Str' };
 
