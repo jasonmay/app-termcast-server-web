@@ -24,6 +24,8 @@ has root => (
 
 sub build_middleware {
     [
+        Web::Hippie->new,
+        Web::Hippie::Pipe->new(bus => AnyMQ->new),
         sub {
             my $app = shift;
             sub {
@@ -44,8 +46,6 @@ sub build_middleware {
                 );
             };
         },
-        Web::Hippie::Pipe->new(bus => AnyMQ->new),
-        Web::Hippie->new,
     ];
 }
 
