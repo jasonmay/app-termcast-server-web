@@ -3,6 +3,25 @@ body {
     font-size: 80%;
 }
 
+#content {
+    width: 800px;
+}
+
+.snippet{
+    font-family: Menlo,Monaco,'Bitstream Vera Sans','Andale Mono',monospace;
+    background-color: black;
+    border: solid 1px white;
+    padding: 20px;
+    margin: 0px;
+    letter-spacing: 1px;
+    color: #e1d9ff;
+    width: 300px;
+    overflow: auto;
+    box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+    -moz-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+    -webkit-box-shadow: 8px 5px 22px rgba(0, 0, 0, 0.80);
+}
+
 a:link {
     color: #00b;
 }

@@ -10,12 +10,8 @@ streaming data. This web application is an example of that!
 <li><a href="http://jarsonmar.blogspot.com/2011/03/termcast-on-web.html">Blog post: Termcast on the Web</a></li>
 </ul>
 <h2>Streaming Instructions</h2>
-<p>
-    <pre style="background-color: white; border: solid 1px black; width: 600px">
-    [Install App::Termcast with your favorite CPAN module installer]
-    termcast --host jarsonmar.org
-    </pre>
-</p>
+    <pre class="snippet">cpanm App::Termcast
+termcast --host jarsonmar.org</pre>
 
 <h2>The Source Code</h2>
 

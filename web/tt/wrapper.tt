@@ -6,6 +6,7 @@
 <script src="static/js/jquery-1.4.1.js"></script>
 </head>
 <body>
+<div id="content">
 <div>
 <img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
 </div>
@@ -15,5 +16,6 @@
 </nav>
 <hr />
 [% content %]
+</div>
 </body>
 </html>
