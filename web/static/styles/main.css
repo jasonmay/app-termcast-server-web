@@ -15,6 +15,7 @@ img#logo {
     border-bottom: solid 1px white;
     height: 30px;
     margin: 0;
+    text-align: center;
 }
 #mainnav a {
     color: #FFFCF2;
