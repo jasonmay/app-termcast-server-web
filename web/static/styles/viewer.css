@@ -1,8 +1,9 @@
 #caption {
     padding-left: 0;
     margin-left:  0;
-    background-color: #aaa;
-    color: #333;
+    background-color: black;
+    color: #bbb;
+    border: solid 1px white;
     font-weight: bold;
     text-align: center;
     padding-top: 3px;
@@ -19,7 +20,7 @@
     background-color: black;
     font-family: monaco, consolas, lucida console, monospace;
     font-size: 80%;
-    border: solid 10px #aaa;
+    border: solid 1px white;
     border-top: 0;
 
 }

@@ -5,15 +5,15 @@
 <script src="/static/js/terms.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/js/jquery-1.4.1.js"></script>
 </head>
-<body>
+<body style="background-color: #ccc">
+<div id="mainnav">
+<a href="/streams">Live Streams</a> |
+<a href="/about">About Termcast</a>
+</div>
 <div id="content">
 <div>
 <img src="../static/images/termcast_logo_web.png" width="265" height="120" alt="termcast logo" />
 </div>
-<nav>
-<a href="/streams">Live Streams</a> |
-<a href="/about">About Termcast</a>
-</nav>
 <hr />
 [% content %]
 </div>
