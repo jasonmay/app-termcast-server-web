@@ -11,7 +11,15 @@ use YAML;
 use Path::Class 'dir';
 use MooseX::Types::Path::Class;
 
-with 'OX::Role::WithAppRoot';
+use Path::Class::File;
+
+has app_root => (
+    is        => 'ro',
+    isa       => 'Path::Class::Dir',
+    lifecycle => 'Singleton',
+    coerce    => 1,
+    block     => sub { Path::Class::File->new(__FILE__)->parent->parent->parent->parent->parent },
+);
 
 has tt_root => (
     is        => 'ro',
