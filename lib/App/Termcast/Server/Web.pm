@@ -95,6 +95,7 @@ router as {
     mount '/_hippie' => 'App::Termcast::Server::Web::Hippie' => (
         connections => 'connections',
     );
+    mount '/hippiejs' => 'Web::Hippie::App::JSFiles';
 }, (tv => 'tv');
 
 XSLoader::load(__PACKAGE__);

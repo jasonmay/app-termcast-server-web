@@ -52,8 +52,6 @@ sub build_middleware {
 router as {
     route '/new_listener' => 'root.new_listener';
     route '/error'        => 'root.error';
-
-    mount '/files' => 'Web::Hippie::App::JSFiles';
 }, (root => 'root');
 
 no Moose;
