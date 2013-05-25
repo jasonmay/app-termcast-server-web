@@ -27,7 +27,6 @@ sub users {
     my $connections = $self->connections;
     my $tt = $self->tt;
 
-    my @hh = $connections->hippie_handles->members;
     my %stream_data;
 
     my @streams = values %{$connections->streams || {}};
@@ -82,7 +81,7 @@ sub view {
             'viewer.tt', {
                 config          => $config,
                 stream          => $stream,
-                params          => $r->parameters->as_hashref,
+                params          => $r->parameters,
                 viewer_template => 'terminal.tt'
             }, \$data
         );

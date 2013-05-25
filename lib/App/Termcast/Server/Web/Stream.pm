@@ -68,7 +68,6 @@ sub connect {
                 my $h = shift;
                 #warn "$h->{rbuf}\n";
 
-                my @hh = $self->connections->hippie_handles->members;
                 my $cleared = 0;
                 if ($h->{rbuf} =~ s/.\e\[2J//s) {
                     $self->buffer('');
@@ -76,15 +75,15 @@ sub connect {
                 }
 
                 my $buf = ($cleared ? "\e[H\e[2J" : '') . $h->{rbuf};
-                foreach my $hippie_handle (@hh) {
-                    next unless $hippie_handle->stream eq $self->id;
+                my @sockets = $self->connections->socket_handles->members;
+                foreach my $socket (@sockets) {
+                    next unless $socket->stream eq $self->id;
                     if ($buf =~ /\e\[2J/s) {
-                        $hippie_handle->clear_vt;
-                        $hippie_handle->send_clear_to_browser();
+                        $socket->clear_vt;
+                        $socket->send_clear_to_browser();
                     }
 
-                    #warn length($buf);
-                    $hippie_handle->send_to_browser($buf);
+                    $socket->send_to_browser($buf);
                 }
 
                 $self->mark_active();
@@ -98,11 +97,10 @@ sub connect {
 
                     my $stream = $self->connections->streams->{ fileno($h->fh) };
 
-                    my @hh = $self->connections->hippie_handles->members;
-
-                    foreach my $hh ( @hh ) {
-                        next unless $hh->stream eq $stream->id;
-                        $hh->send_disconnect_to_browser();
+                    my @sockets = $self->connections->socket_handles->members;
+                    foreach my $socket ( @sockets ) {
+                        next unless $socket->id eq $stream->id;
+                        $socket->send_disconnect_to_browser();
                     }
 
                     $self->connections->delete_stream( fileno($h->fh) );

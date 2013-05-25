@@ -20,10 +20,9 @@ has streams => (
     weak_ref => 1,
 );
 
-# websocket handles from Web::Hippie
-has hippie_handles => (
-    is      => 'ro',
-    isa     => 'Set::Object',
+has socket_handles => (
+    is  => 'ro',
+    isa => 'Set::Object',
     default => sub { set() },
 );
 
@@ -105,11 +104,11 @@ sub handle_metadata {
         $stream->cols($cols);
         $stream->lines($lines);
 
-        my @hippie_handles =
+        my @handles =
             grep { $_->stream eq $stream_id }
-            $self->hippie_handles->members;
+            $self->socket_handles->members;
 
-        foreach my $hh (@hippie_handles) {
+        foreach my $hh (@handles) {
             $hh->send_resize_to_browser($cols, $lines);
         }
     }
@@ -149,6 +148,17 @@ sub get_stream {
     my $fd = $self->stream_to_fd->{$stream_id};
     return undef unless $fd;
     return $self->streams->{$fd};
+}
+
+sub find_socket {
+    my $self       = shift;
+    my $socket = shift;
+
+    my @websockets = $self->socket_handles->members;
+    for my $websocket (@websockets) {
+        return $websocket if $socket->id eq $websocket->id;
+    }
+    return undef;
 }
 
 sub vivify_connection {

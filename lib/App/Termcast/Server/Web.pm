@@ -4,6 +4,8 @@ use OX;
 
 use Plack::Request;
 use Plack::Middleware::Static;
+use Plack::App::File;
+use PocketIO;
 
 use Template;
 
@@ -60,6 +62,13 @@ has connections    => (
     dependencies => ['config'],
 );
 
+has handler    => (
+    is           => 'ro',
+    isa          => 'App::Termcast::Server::Web::Socket::Handler',
+    lifecycle    => 'Singleton',
+    dependencies => ['connections'],
+);
+
 has tv => (
     is           => 'ro',
     isa          => 'App::Termcast::Server::Web::TV',
@@ -68,12 +77,12 @@ has tv => (
 );
 
 sub build_middleware {
-        [
-            Plack::Middleware::Static->new(
-                path => qr!^/?(?:static/|favicon\.ico)!,
-                root => 'web/',
-            ),
-        ]
+    [
+        Plack::Middleware::Static->new(
+            path => qr!^/?(?:static/|favicon\.ico)!,
+            root => 'web/',
+        ),
+    ]
 }
 
 sub BUILD { shift->connections->vivify_connection }
@@ -92,10 +101,13 @@ router as {
     route '/tv/:id' => 'tv.view',
         id => { isa => 'Str' };
 
-    mount '/_hippie' => 'App::Termcast::Server::Web::Hippie' => (
-        connections => 'connections',
+    mount '/socket.io' => 'PocketIO', (
+        instance => dep('handler'),
+        method   => literal('run'),
     );
-    mount '/hippiejs' => 'Web::Hippie::App::JSFiles';
+    mount '/socket.io/socket.io.js' => Plack::App::File->new(
+        file => "web/socket.io/socket.io.js",
+    )->to_app;
 }, (tv => 'tv');
 
 XSLoader::load(__PACKAGE__);

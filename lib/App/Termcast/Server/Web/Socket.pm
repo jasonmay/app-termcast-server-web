@@ -1,18 +1,19 @@
-package App::Termcast::Server::Web::Hippie::Handle;
+package App::Termcast::Server::Web::Socket;
 use Moose;
 
 use App::Termcast::Server::Web::VT102i;
 use App::Termcast::Server::Web::VT102;
 
 has handle => (
-    is => 'ro',
+    is       => 'ro',
+    isa      => 'PocketIO::Socket',
+    handles  => ['id'],
     required => 1,
 );
 
 has stream => (
-    is => 'ro',
-    isa => 'Str',
-    required => 1,
+    is       => 'rw',
+    isa      => 'Str',
 );
 
 has vt => (
@@ -65,6 +66,7 @@ sub make_vt {
 
     my $vt = App::Termcast::Server::Web::VT102i->new(%args);
     $vt->vt->option_set('LINEWRAP', 1);
+    warn "VT Created.";
 
     return $vt;
 }
@@ -72,7 +74,9 @@ sub make_vt {
 sub send {
     my $self = shift;
     my $data = shift;
-    $self->handle->send_msg({type => 'data', data => $data});
+    my $encoded = JSON::encode_json($data);
+    warn $encoded;
+    $self->handle->emit('data', $encoded);
 }
 
 sub send_clear_to_browser {
