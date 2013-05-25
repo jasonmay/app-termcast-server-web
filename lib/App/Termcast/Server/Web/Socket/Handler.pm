@@ -18,6 +18,7 @@ sub run {
            my ($socket, $stream) = @_;
            my $t_socket = $self->connections->find_socket($socket);
            $t_socket->stream($stream) if $t_socket;
+           $socket->emit('ready');
        });
        my $t_socket = App::Termcast::Server::Web::Socket->new(handle => $socket);
        $self->connections->socket_handles->insert($t_socket);
