@@ -77,7 +77,7 @@ sub connect {
                 my $buf = ($cleared ? "\e[H\e[2J" : '') . $h->{rbuf};
                 my @sockets = $self->connections->socket_handles->members;
                 foreach my $socket (@sockets) {
-                    next unless $socket->stream eq $self->id;
+                    next unless defined($socket->stream) && $socket->stream eq $self->id;
                     if ($buf =~ /\e\[2J/s) {
                         $socket->clear_vt;
                         $socket->send_clear_to_browser();
@@ -95,7 +95,11 @@ sub connect {
                 my ($h, $fatal, $error) = @_;
                 if ($fatal) {
 
-                    my $stream = $self->connections->streams->{ fileno($h->fh) };
+                    my $stream = $self->connections->streams->{ fileno($h->fh) } or do {
+                        $h->destroy;
+                        warn "Stream not found...";
+                        return;
+                    };
 
                     my @sockets = $self->connections->socket_handles->members;
                     foreach my $socket ( @sockets ) {
