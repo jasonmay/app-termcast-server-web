@@ -2,7 +2,6 @@ package App::Termcast::Server::Web::Socket::Handler;
 use Moose;
 
 use App::Termcast::Server::Web::Socket;
-use JSON;
 
 has connections => (
     is       => 'ro',
