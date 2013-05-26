@@ -65,6 +65,7 @@ $(function() {
         $('#terminal').show(); // don't fade - makes canvas sad
         canvas.streamer_username = '[% stream.username %]';
         init_canvas(canvas, [% stream.cols %], [% stream.lines %]);
+        socket.emit('ready');
         socket.on('data', function(data) {
             console.log(data)
             message_func(JSON.parse(data));
